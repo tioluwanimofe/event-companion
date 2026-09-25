@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+
+# Dependencies and builds (for the future Next.js app)
+node_modules/
+.next/
+out/
+dist/
+
+# Environment secrets (Supabase keys etc.)
+.env
+.env.*
+!.env.example
+
+# Claude Code local settings
+.claude/settings.local.json

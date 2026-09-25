@@ -1,0 +1,1173 @@
+<title>Event Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --f-display:'Archivo','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --ground:#E6E9E2; --surface:#FAFBF7; --surface-2:#EFF2EB; --surface-3:#E1E5DC;
+  --ink:#15191C; --ink-2:#535C57; --ink-3:#7E8782; --line:#D5DAD1;
+  --accent:#D4430E; --accent-ink:#FFFFFF; --accent-soft:#FBE2D6;
+  --ok:#0E7A5F; --ok-soft:#D7EEE4; --warn:#8F5B00; --warn-soft:#F7EACD; --danger:#B42318;
+  --frame:#16191B; --sign:#15191C; --sign-ink:#F3F5EF; --stamp:#6EE0B4; --stamp-warn:#F5C15A;
+  --m-floor:#F1F3EE; --m-hall:#E0E5DC; --m-stage:#F5D8CA; --m-room:#DCE3EB; --m-food:#F2E4C4; --m-wall:#97A09A;
+  --av1:#C8DFF1; --av2:#F2D5C8; --av3:#D3EBD8; --av4:#E5D9F2; --av-ink:#15191C;
+  --shadow:0 40px 80px -40px rgba(20,32,26,.55);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#0B0E0F; --surface:#131718; --surface-2:#1B2022; --surface-3:#262C2F;
+    --ink:#ECEFE9; --ink-2:#A2ABA6; --ink-3:#737C77; --line:#2A3134;
+    --accent:#FF6B35; --accent-ink:#1A0B04; --accent-soft:#3A1E12;
+    --ok:#43C59C; --ok-soft:#10302A; --warn:#E8B04B; --warn-soft:#332711; --danger:#FF7A6B;
+    --frame:#000000; --sign:#EEF1EA; --sign-ink:#121517; --stamp:#0E7A5F; --stamp-warn:#8F5B00;
+    --m-floor:#181D1F; --m-hall:#222A2C; --m-stage:#3A2519; --m-room:#1E2934; --m-food:#342B16; --m-wall:#4C565A;
+    --av1:#21394B; --av2:#4A2D22; --av3:#1E3A28; --av4:#33284A; --av-ink:#ECEFE9;
+    --shadow:0 40px 80px -40px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#0B0E0F; --surface:#131718; --surface-2:#1B2022; --surface-3:#262C2F;
+  --ink:#ECEFE9; --ink-2:#A2ABA6; --ink-3:#737C77; --line:#2A3134;
+  --accent:#FF6B35; --accent-ink:#1A0B04; --accent-soft:#3A1E12;
+  --ok:#43C59C; --ok-soft:#10302A; --warn:#E8B04B; --warn-soft:#332711; --danger:#FF7A6B;
+  --frame:#000000; --sign:#EEF1EA; --sign-ink:#121517; --stamp:#0E7A5F; --stamp-warn:#8F5B00;
+  --m-floor:#181D1F; --m-hall:#222A2C; --m-stage:#3A2519; --m-room:#1E2934; --m-food:#342B16; --m-wall:#4C565A;
+  --av1:#21394B; --av2:#4A2D22; --av3:#1E3A28; --av4:#33284A; --av-ink:#ECEFE9;
+  --shadow:0 40px 80px -40px rgba(0,0,0,.9);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:15px;padding-inline:16px;padding-block:28px}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.stage{display:flex;gap:40px;justify-content:center;align-items:flex-start;max-width:1120px;margin:0 auto}
+.phone{position:relative;flex:none;width:392px;max-width:100%;height:min(830px,calc(100dvh - 56px));min-height:660px;background:var(--surface);border:11px solid var(--frame);border-radius:50px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px 6px;font:700 13px/1 var(--f-body);color:var(--ink);flex:none}
+.island{width:92px;height:26px;border-radius:14px;background:var(--frame)}
+.sb-net{display:flex;gap:5px;align-items:center;min-width:52px;justify-content:flex-end}
+.sb-net.off{color:var(--warn)}
+#screen{position:relative;flex:1;min-height:0}
+
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.display{font-family:var(--f-display);font-weight:800;font-stretch:78%;letter-spacing:-.01em;line-height:1;text-wrap:balance;margin:0;font-size:34px}
+.display.md{font-size:30px}.display.sm{font-size:24px}
+.eyebrow,.label{font:700 11.5px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.12em;color:var(--ink-2);margin:0}
+.label{margin-top:10px;margin-bottom:-4px}
+.lede{color:var(--ink-2);font-size:16px;line-height:1.45;margin:0}
+.body{font-size:15px;line-height:1.5;margin:0;color:var(--ink)}
+.fine{font-size:12.5px;color:var(--ink-3);line-height:1.45;margin:0}
+.mono{font-family:var(--f-mono);font-size:11.5px}
+.empty{font-size:14px;color:var(--ink-3);margin:0;padding:6px 0}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:700 15px var(--f-body);text-align:left}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.btn.block{width:100%}
+.btn.ghost{border-color:transparent;background:none;color:var(--ink-2);min-height:38px}
+.btn.danger{color:var(--danger)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stack{display:flex;flex-direction:column;gap:8px}
+.mark{display:inline-grid;place-items:center;width:30px;height:30px;background:var(--accent);color:var(--accent-ink);font:900 13px/1 var(--f-display);font-stretch:70%;border-radius:7px;letter-spacing:.03em;flex:none}
+.mark.lg{width:64px;height:64px;font-size:25px;border-radius:16px}
+
+.chip{display:inline-flex;align-items:center;gap:5px;font:700 10.5px/1 var(--f-body);text-transform:uppercase;letter-spacing:.07em;padding:4px 7px;border-radius:5px;background:var(--surface-3);color:var(--ink-2);white-space:nowrap}
+.chip.live{background:var(--accent-soft);color:var(--accent)}
+.chip.live::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.6s ease-in-out infinite}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+@keyframes pulse{50%{opacity:.3}}
+
+/* app shell */
+.app{position:absolute;inset:0;display:flex;flex-direction:column}
+.appbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 14px 10px;border-bottom:1px solid var(--line);flex:none}
+.ab-event{display:flex;gap:9px;align-items:center;min-width:0}
+.ab-event b{display:block;font:800 15px/1.1 var(--f-display);font-stretch:85%;white-space:nowrap}
+.ab-event small{color:var(--ink-2);font-size:11.5px;white-space:nowrap}
+.ab-right{display:flex;gap:8px;align-items:center}
+.icon-btn{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0}
+.icon-btn.solid{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.pill{font:700 11.5px/1 var(--f-body);padding:6px 9px;border-radius:99px;display:inline-flex;gap:5px;align-items:center;background:var(--surface-2);color:var(--ink-2);border:0;white-space:nowrap}
+.pill .ic{width:13px;height:13px;stroke-width:2.4}
+.pill.ok{color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.scroll{flex:1;min-height:0;overflow-y:auto;padding:16px 16px 28px;display:flex;flex-direction:column;gap:14px}
+.tabbar{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:var(--surface);padding:6px 4px 12px;flex:none}
+.tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--ink-3);padding:6px 0 2px;border-radius:10px}
+.tab[aria-current="page"]{color:var(--ink)}
+.tab[aria-current="page"] .ic{stroke-width:2.3}
+.tab::after{content:"";width:4px;height:4px;border-radius:2px;background:transparent}
+.tab[aria-current="page"]::after{background:var(--accent)}
+
+/* home */
+.badge{position:relative;background:var(--sign);color:var(--sign-ink);border-radius:18px;padding:28px 18px 16px;overflow:hidden}
+.badge-hole{position:absolute;top:10px;left:50%;width:46px;height:8px;margin-left:-23px;border-radius:5px;background:var(--surface)}
+.badge-band{display:flex;justify-content:space-between;font:800 11.5px var(--f-display);letter-spacing:.16em;text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid color-mix(in srgb,var(--sign-ink) 22%,transparent)}
+.badge-role{display:inline-block;background:var(--accent);color:var(--accent-ink);font:800 10.5px var(--f-display);letter-spacing:.16em;text-transform:uppercase;padding:4px 8px;border-radius:4px;margin-top:14px}
+.badge-name{font:900 44px/.9 var(--f-display);font-stretch:64%;text-transform:uppercase;margin-top:8px;overflow-wrap:anywhere}
+.badge-id{opacity:.6;margin-top:8px}
+.badge-foot{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px dashed color-mix(in srgb,var(--sign-ink) 30%,transparent);font-weight:700;font-size:14px}
+.badge-foot .ic{color:var(--stamp);stroke-width:2.6}
+.badge-foot .wait{color:var(--stamp-warn);font-weight:400;font-size:12.5px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{text-align:left;background:var(--surface-2);border:0;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:7px;color:var(--ink)}
+.tile-n{font:800 36px/1 var(--f-display);font-stretch:72%;font-variant-numeric:tabular-nums}
+.tile-n small{font-size:18px;color:var(--ink-3)}
+.tile-l{font-size:13px;color:var(--ink-2)}
+.avs{display:flex;padding-left:6px;min-height:24px}
+.avs .av{width:24px;height:24px;font-size:9.5px;margin-left:-6px;border:2px solid var(--surface-2)}
+.meter{height:6px;background:var(--surface-3);border-radius:3px;overflow:hidden;margin-block:9px}
+.meter i{display:block;height:100%;background:var(--ok);border-radius:3px}
+.scard{display:grid;grid-template-columns:54px 1fr;gap:12px;align-items:start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--ink);width:100%}
+.scard .t b{display:block;font:800 22px/1 var(--f-display);font-stretch:70%}
+.scard .t small{font:700 10.5px var(--f-display);letter-spacing:.1em;color:var(--ink-3)}
+.scard .c{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+.scard .c b{font-size:15.5px;line-height:1.25}
+.scard .c small{font-size:12.5px;color:var(--ink-2)}
+.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:800 14px var(--f-display);color:var(--av-ink);flex:none;background:var(--av1)}
+.av.c2{background:var(--av2)}.av.c3{background:var(--av3)}.av.c4{background:var(--av4)}
+.av.lg{width:58px;height:58px;font-size:21px}
+
+/* map */
+.search{position:relative}
+.search .ic{position:absolute;left:12px;top:12px;color:var(--ink-3)}
+.search input{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:0 12px 0 40px;font:15px var(--f-body)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-inline:-16px;padding-inline:16px;scrollbar-width:none}
+.fchip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:99px;padding:7px 12px;font:700 13px var(--f-body)}
+.fchip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.map-wrap{background:var(--m-floor);border:1px solid var(--line);border-radius:14px;padding:4px}
+svg.map{width:100%;height:auto;display:block}
+.m-floor{fill:var(--m-floor);stroke:var(--m-wall);stroke-width:.6}
+.m-area{stroke:var(--m-wall);stroke-width:.3;cursor:pointer;transition:opacity .2s}
+.k-hall{fill:var(--m-hall);cursor:default}.k-stage{fill:var(--m-stage)}.k-room{fill:var(--m-room)}.k-food{fill:var(--m-food)}.k-service{fill:var(--surface-3)}
+.m-area.sel{stroke:var(--accent);stroke-width:.9}
+.m-lbl{font:800 2.5px var(--f-display);letter-spacing:.12px;fill:var(--ink-2);text-anchor:middle;pointer-events:none}
+.m-deco{fill:var(--m-wall);opacity:.35;pointer-events:none}
+.m-door{stroke:var(--accent);stroke-width:1.4}
+.m-booth{cursor:pointer;transition:opacity .2s}
+.m-booth rect{fill:var(--surface);stroke:var(--ink);stroke-width:.35}
+.m-booth text{font:800 3.6px var(--f-display);fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.m-booth.visited rect{fill:var(--ok);stroke:var(--ok)}
+.m-booth.visited text{fill:var(--surface)}
+.m-booth.sel rect{stroke:var(--accent);stroke-width:1}
+.m-pin{cursor:pointer;transition:opacity .2s}
+.m-pin circle.p{fill:var(--ink)}
+.m-pin.entrance circle.p{fill:var(--accent)}
+.m-pin.sel circle.p{stroke:var(--accent);stroke-width:1;fill:var(--ink)}
+.m-pin circle.hit{fill:transparent}
+.m-pin text{font:800 2.5px var(--f-display);fill:var(--surface);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.dim{opacity:.22}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink-2)}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.sw{width:12px;height:12px;border-radius:3px;border:1px solid var(--m-wall)}
+.lrow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 0;border:0;border-bottom:1px solid var(--line);background:none;width:100%;text-align:left;color:var(--ink);font:inherit}
+.lrow > span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lrow b{font-size:15px}
+.lrow small{color:var(--ink-2);font-size:12.5px}
+.list{list-style:none;margin:0;padding:0}
+.sheet{position:absolute;left:10px;right:10px;bottom:74px;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 48px -16px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:8px;animation:up .2s ease-out}
+.sheet h3{font:800 24px/1 var(--f-display);font-stretch:78%;margin:0}
+.sheet .x{position:absolute;right:10px;top:10px;width:32px;height:32px;border:0}
+@keyframes up{from{transform:translateY(16px);opacity:0}}
+
+/* booth + session */
+.sign-hero{position:relative;background:var(--sign);color:var(--sign-ink);border-radius:16px;padding:18px;display:flex;justify-content:space-between;align-items:flex-end;min-height:128px;overflow:hidden}
+.sign-num{font:900 84px/.8 var(--f-display);font-stretch:62%;letter-spacing:-.01em}
+.sign-dir{font:800 13px var(--f-display);letter-spacing:.14em;text-transform:uppercase;display:flex;gap:6px;align-items:center}
+.sign-dir .ic{color:var(--accent);stroke-width:2.6}
+.stamp{position:absolute;right:16px;top:16px;border:2px solid var(--stamp);color:var(--stamp);font:900 14px var(--f-display);letter-spacing:.16em;padding:4px 8px;border-radius:4px;transform:rotate(-7deg);text-transform:uppercase}
+.meta{display:inline-flex;gap:6px;align-items:center;color:var(--ink-2);font-size:14px;margin:0;background:none;border:0;padding:0;text-align:left}
+.meta.link{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.meta .ic{width:17px;height:17px}
+.visit{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--surface-2);color:var(--ink-2);font-size:14px;line-height:1.4}
+.visit.ok{background:var(--ok-soft);color:var(--ink)}
+.visit.ok .ic{color:var(--ok);stroke-width:2.6}
+.visit b{display:block;color:var(--ink)}
+.visit small{font-size:12.5px;color:var(--ink-2)}
+.payload{color:var(--ink-3);border-top:1px dashed var(--line);padding-top:10px}
+.s-when{display:flex;gap:10px;align-items:center;color:var(--ink-2)}
+.speaker{display:flex;gap:12px;align-items:center}
+.speaker b{display:block}
+.speaker small{color:var(--ink-2);font-size:13px}
+.kps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;counter-reset:k}
+.kps li{background:var(--surface-2);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;counter-increment:k}
+.kps li::before{content:"Point " counter(k);font:700 10.5px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.kps p{margin:0;font-size:15px;line-height:1.45}
+.save{align-self:flex-start;background:none;border:1px solid var(--line);border-radius:99px;padding:5px 11px 5px 8px;font:700 12.5px var(--f-body);color:var(--ink-2);display:inline-flex;gap:5px;align-items:center}
+.save .ic{width:15px;height:15px}
+.save.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.save.on .ic{fill:currentColor}
+textarea{width:100%;min-height:96px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:12px;font:15px/1.45 var(--f-body);resize:vertical}
+.note-actions{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.note-actions small{color:var(--ink-3);font-size:12px}
+.note{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border-radius:12px;padding:12px 8px 12px 14px}
+.note p{margin:0 0 4px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.note small{color:var(--ink-3);font-size:12px}
+.note > div{flex:1;min-width:0}
+.note .icon-btn{width:32px;height:32px;border:0;background:none;color:var(--ink-3)}
+
+/* schedule */
+.sched{list-style:none;padding:0;margin:0}
+.srow{display:grid;grid-template-columns:56px 1fr;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:14px 2px;color:var(--ink)}
+.srow .t b{display:block;font:800 25px/1 var(--f-display);font-stretch:70%;font-variant-numeric:tabular-nums}
+.srow .t small{font:700 10.5px var(--f-display);letter-spacing:.1em;color:var(--ink-3)}
+.srow .c{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+.srow .c b{font-size:16px;line-height:1.25}
+.srow .c small{color:var(--ink-2);font-size:13px}
+.srow.past .t b,.srow.past .c b{color:var(--ink-3)}
+.nowline{display:flex;align-items:center;gap:8px;color:var(--accent);font:800 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;padding:10px 0 2px}
+.nowline::after{content:"";flex:1;height:2px;background:var(--accent);border-radius:1px}
+
+/* friends */
+.flist{list-style:none;margin:0;padding:0}
+.flist li{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.flist li > div{flex:1;min-width:0}
+.flist b{display:block}
+.flist small{color:var(--ink-2);font-size:13px}
+.req{border:1px dashed var(--ink-3);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.req-top{display:flex;gap:12px;align-items:center}
+.req-top b{display:block}
+.req-top small{color:var(--ink-2);font-size:13px}
+.note-box{background:var(--surface-2);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--ink-2);line-height:1.45;display:flex;gap:10px;align-items:flex-start}
+.note-box .ic{color:var(--ink);margin-top:1px}
+.note-box button{background:none;border:0;padding:0;color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+
+/* profile */
+.me{display:flex;gap:14px;align-items:center}
+.me small{color:var(--ink-2);font-size:13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:var(--surface-2);border-radius:12px;padding:12px 14px}
+.stat b{font:800 30px/1 var(--f-display);font-stretch:72%;display:block;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--ink-2)}
+.synccard{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px}
+.synccard .head{display:flex;gap:8px;align-items:center;font-weight:700}
+.synccard .head .ic{color:var(--ok)}
+.synccard.off .head .ic{color:var(--warn)}
+.sq{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px;color:var(--ink-2)}
+.sq span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.switch-row{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;background:var(--surface-2);border:0;border-radius:12px;padding:14px;font:700 14.5px var(--f-body);color:var(--ink);text-align:left}
+.switch-row small{display:block;font-weight:400;color:var(--ink-2);font-size:12.5px;margin-top:2px}
+.switch{width:44px;height:26px;border-radius:13px;background:var(--surface-3);position:relative;flex:none;transition:background .2s;border:1px solid var(--line)}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+[aria-checked="true"] .switch{background:var(--ok);border-color:var(--ok)}
+[aria-checked="true"] .switch::after{transform:translateX(18px)}
+.confirm{border:1px solid var(--danger);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--ink)}
+
+/* scanner (always dark: it's a camera) */
+.scanner{position:absolute;inset:0;z-index:20;background:#0B0D0E;color:#F2F4EF;display:flex;flex-direction:column;animation:fade .15s}
+@keyframes fade{from{opacity:0}}
+.sc-top{display:flex;align-items:center;gap:12px;padding:6px 14px 8px}
+.sc-top b{font:800 18px var(--f-display);font-stretch:85%}
+.sc-top .icon-btn{background:#1B2022;border-color:#2C3336;color:#F2F4EF}
+.viewfinder{position:relative;margin:6px auto 0;width:58%;max-width:230px;aspect-ratio:1;flex:none}
+.viewfinder .cn{position:absolute;width:26px;height:26px;border:3px solid #FF6B35}
+.cn.a{left:0;top:0;border-right:0;border-bottom:0;border-top-left-radius:10px}
+.cn.b{right:0;top:0;border-left:0;border-bottom:0;border-top-right-radius:10px}
+.cn.c{left:0;bottom:0;border-right:0;border-top:0;border-bottom-left-radius:10px}
+.cn.d{right:0;bottom:0;border-left:0;border-top:0;border-bottom-right-radius:10px}
+.scanline{position:absolute;left:8%;right:8%;height:2px;background:#FF6B35;box-shadow:0 0 12px 2px rgba(255,107,53,.6);animation:sweep 2.2s ease-in-out infinite alternate}
+@keyframes sweep{from{top:10%}to{top:90%}}
+.reading{position:absolute;inset:14%;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:700;font-size:13px}
+.reading .qr{width:100%;height:auto;border-radius:6px;animation:fade .2s}
+.sc-hint{text-align:center;font-size:12.5px;line-height:1.45;color:#9AA3A0;padding:12px 26px 6px;margin:0}
+.codes{flex:1;min-height:0;overflow-y:auto;padding:6px 14px 18px;display:flex;flex-direction:column;gap:8px}
+.codes .eyebrow{color:#8A938F;margin-top:6px}
+.code{display:flex;gap:12px;align-items:center;background:#171B1D;border:1px solid #2A3033;border-radius:12px;padding:9px;color:#F2F4EF;text-align:left;width:100%}
+.code:hover{border-color:#FF6B35}
+.code .qr{width:44px;height:44px;border-radius:4px;flex:none}
+.code b{display:block;font-size:14px}
+.code small{color:#98A19D}
+
+/* landing / entry / splash */
+.land{position:absolute;inset:0;display:flex;flex-direction:column;overflow-y:auto}
+.land-top{background:var(--sign);color:var(--sign-ink);padding:18px 20px 22px;display:flex;flex-direction:column;gap:16px;margin:0 10px;border-radius:22px}
+.wordmark{display:flex;gap:9px;align-items:center;font:800 15px var(--f-display);font-stretch:90%}
+.land-top h1{font:900 58px/.86 var(--f-display);font-stretch:62%;text-transform:uppercase;margin:6px 0 0;letter-spacing:-.005em}
+.land-top h1 em{font-style:normal;color:var(--accent)}
+.land-top p{margin:0;font-size:15px;line-height:1.45;color:color-mix(in srgb,var(--sign-ink) 72%,transparent)}
+.signstrip{display:flex;justify-content:space-between;gap:10px;border-top:2px solid color-mix(in srgb,var(--sign-ink) 85%,transparent);padding-top:10px;font:800 12px var(--f-display);letter-spacing:.14em;text-transform:uppercase}
+.signstrip span{display:inline-flex;gap:5px;align-items:center}
+.signstrip .ic{width:16px;height:16px;color:var(--accent);stroke-width:2.6}
+.land-form{padding:18px 20px 22px;display:flex;flex-direction:column;gap:8px}
+.land-form label{font:700 13px var(--f-body);color:var(--ink-2)}
+.land-form input{height:48px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:16px var(--f-body);background:var(--surface);color:var(--ink);margin-bottom:6px}
+.err{color:var(--danger);font-size:13.5px;margin:0}
+.event-card{border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.event-card h2{font:800 26px/1 var(--f-display);font-stretch:75%;margin:0}
+.event-card p{margin:0;color:var(--ink-2);font-size:14px}
+.splash{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:14px;background:var(--surface);color:var(--ink-2);font-weight:700}
+.bar{width:120px;height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;width:40%;background:var(--accent);animation:load 1s ease-in-out infinite}
+@keyframes load{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+
+.toast{position:absolute;left:14px;right:14px;top:50px;z-index:40;background:var(--ink);color:var(--surface);border-radius:12px;padding:12px 14px;font-weight:700;font-size:14px;line-height:1.35;display:flex;gap:9px;align-items:flex-start;transform:translateY(-10px);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.toast.show{opacity:1;transform:none}
+.toast .ic{color:var(--stamp);stroke-width:2.6;margin-top:-1px}
+.toast.warn .ic{color:var(--stamp-warn)}
+
+/* control panel */
+.panel{flex:0 1 350px;min-width:0;display:flex;flex-direction:column;gap:14px;padding-top:6px}
+.panel h1{font:900 40px/.92 var(--f-display);font-stretch:66%;text-transform:uppercase;margin:0;text-wrap:balance}
+.panel h3{font:700 11.5px var(--f-display);text-transform:uppercase;letter-spacing:.12em;color:var(--ink-2);margin:10px 0 0}
+.panel > p{margin:0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--surface-3);border-radius:12px;padding:4px;gap:4px}
+.seg button{height:38px;border:0;border-radius:9px;background:none;font:700 14px var(--f-body);color:var(--ink-2);display:flex;gap:7px;align-items:center;justify-content:center}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.seg .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.seg .off .dot{background:var(--warn)}
+.ctl{display:flex;flex-direction:column;gap:8px}
+.ctl .btn{justify-content:flex-start;width:100%}
+.ctl .btn small{margin-left:auto;color:var(--ink-3);font-weight:400;font-size:12px}
+.checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column}
+.checklist li{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.35;padding:5px 0;color:var(--ink-2)}
+.checklist .box{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--ink-3);flex:none;display:grid;place-items:center;margin-top:0}
+.checklist .box .ic{width:13px;height:13px;stroke-width:3}
+.checklist li.done{color:var(--ink)}
+.checklist li.done .box{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.checklist li.key{font-weight:700}
+.progress{font:800 13px var(--f-display);color:var(--ink)}
+.layers{display:flex;flex-direction:column;gap:0}
+.layer{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.layer h4{margin:0 0 8px;font:800 12px var(--f-display);letter-spacing:.1em;text-transform:uppercase;display:flex;justify-content:space-between}
+.layer h4 span{color:var(--ink-3);font-weight:700;letter-spacing:.06em}
+.layer dl{display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin:0;font-size:13px}
+.layer dt{color:var(--ink-2)}
+.layer dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;overflow-wrap:anywhere}
+.link-arrow{display:flex;align-items:center;gap:8px;padding:6px 14px;font:700 11px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.link-arrow .ic{width:16px;height:16px}
+.link-arrow.paused{color:var(--warn)}
+
+@media (max-width:820px){
+  .stage{flex-direction:column;align-items:center}
+  .panel{flex:none;width:100%;max-width:440px}
+}
+@media (max-width:520px){
+  body{padding-block:12px}
+  .phone{width:100%;border-width:0;border-radius:20px;height:calc(100dvh - 24px);min-height:560px;box-shadow:none;border:1px solid var(--line)}
+  .statusbar{display:none}
+  .appbar{padding-top:12px}
+  .land-top{margin-top:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="statusbar"><span id="sb-time">2:20</span><span class="island"></span><span class="sb-net" id="sb-net"></span></div>
+    <div id="screen"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <aside class="panel" aria-label="Prototype controls">
+    <p class="eyebrow">Prototype controls</p>
+    <h1>Try to lose your progress</h1>
+    <p>A working model of the MVP from your spec. Every action goes to a sync queue on the phone, then to a simulated server — both kept in this browser, so the "server" survives even when the "phone" is wiped.</p>
+    <div id="pctl"></div>
+    <h3>MVP test script <span class="progress" id="pprog"></span></h3>
+    <ol class="checklist" id="pcheck"></ol>
+    <h3>Where your data lives right now</h3>
+    <div class="layers" id="players"></div>
+  </aside>
+</div>
+
+<script>
+/* ---------------- data ---------------- */
+const EVENT = { id:'evt_001', name:'Horizon Tech Summit', year:'2026', date:'Thursday, Sept 24', venue:'Meridian Convention Center' };
+
+const BOOTHS = [
+  { id:'booth_012', num:12, name:'Northwind Robotics', cat:'Robotics', x:12, y:30, blurb:'Collaborative robot arms for small-batch manufacturing. Live pick-and-place demo every 30 minutes.' },
+  { id:'booth_018', num:18, name:'Clearpath Sensors', cat:'IoT & Sensors', x:24, y:30, blurb:'Low-power environmental sensors and the mesh network that ties them together. Ask for the teardown kit.' },
+  { id:'booth_027', num:27, name:'Lumen Labs', cat:'AR / VR', x:36, y:30, blurb:'Try the headset that overlays wiring diagrams directly onto real equipment.' },
+  { id:'booth_042', num:42, name:'Voltline Compute', cat:'AI & Computing', x:48, y:30, blurb:'GPU clusters for training, plus edge inference modules small enough for robots and cameras.' },
+  { id:'booth_055', num:55, name:'Harbor Cloud', cat:'Cloud', x:12, y:52, blurb:'Managed databases and hosting with a free tier for student projects.' },
+  { id:'booth_063', num:63, name:'Keystone Security', cat:'Security', x:24, y:52, blurb:'Capture-the-flag challenge at the booth — top score by 4 PM wins a hardware key.' },
+  { id:'booth_071', num:71, name:'Fieldnote Bio', cat:'Health Tech', x:36, y:52, blurb:'Wearables that turn clinical trial check-ins into a 30-second daily tap.' },
+  { id:'booth_088', num:88, name:'Career Commons', cat:'Careers', x:48, y:52, blurb:'Resume reviews all day and walk-up intros to 40 hiring teams.' },
+];
+
+const PLACES = [
+  { id:'main_stage', name:'Main Stage', type:'stage', area:{x:62,y:18,w:34,h:34}, desc:'Keynotes and headline talks. Seats 1,200.' },
+  { id:'room_101', name:'Room 101', type:'room', area:{x:62,y:56,w:16,h:20}, desc:'Breakout sessions. Seats 150.' },
+  { id:'room_102', name:'Room 102', type:'room', area:{x:80,y:56,w:16,h:20}, desc:'Breakout sessions. Seats 150.' },
+  { id:'hall_b', name:'Hall B', type:'room', area:{x:62,y:80,w:34,h:18}, desc:'Career fair and the evening mixer.' },
+  { id:'food', name:'Food Court', type:'food', area:{x:4,y:74,w:34,h:22}, desc:'Lunch served 12:00–2:30 PM. Vegetarian and halal options at every counter.' },
+  { id:'coffee', name:'Coffee Bar', type:'food', pin:{x:48,y:86}, glyph:'C', desc:'Open all day. Free refills with your badge.' },
+  { id:'reg', name:'Registration', type:'service', area:{x:30,y:100,w:40,h:9}, desc:'Badge pickup, lost & found, and help with the app. The event check-in QR is here.' },
+  { id:'wc_n', name:'Restrooms (north)', type:'service', pin:{x:57,y:11}, glyph:'WC', desc:'Accessible stalls and a baby-changing room.' },
+  { id:'wc_s', name:'Restrooms (south)', type:'service', pin:{x:18,y:106}, glyph:'WC', desc:'Next to registration.' },
+  { id:'aid', name:'First Aid', type:'service', pin:{x:86,y:106}, glyph:'+', desc:'Staffed 8 AM – 7 PM.' },
+  { id:'ent_n', name:'North Entrance', type:'entrance', pin:{x:30,y:7}, glyph:'↓', desc:'From the parking garage and rideshare drop-off.' },
+  { id:'ent_s', name:'South Entrance', type:'entrance', pin:{x:50,y:115}, glyph:'↑', desc:'Main entrance from the transit station.' },
+];
+
+const SESSIONS = [
+  { id:'session_001', title:'Opening Session', speaker:'Priya Raman', role:'Summit Director', loc:'main_stage', start:540, end:585,
+    desc:'Welcome, a tour of today’s floor, and what’s new at this year’s summit.',
+    kps:['Over 60 exhibitors across Hall A and Hall B this year.','Every booth has a QR code — scan it to keep a record of who you met.','The career mixer in Hall B runs from 5:00 to 6:30 PM.'] },
+  { id:'session_007', title:'The Future of Intelligent Systems', speaker:'Dr. Jane Smith', role:'Chief Scientist, Arclight Research', loc:'main_stage', start:630, end:675,
+    desc:'Where intelligent systems are heading once they leave the data center.',
+    kps:['Most useful AI in the next five years will run close to where its data is created.','Evaluation, not model size, is now the bottleneck for most teams.','Treat every model output as a claim that needs checking.'] },
+  { id:'session_011', title:'Designing Sensors for the Real World', speaker:'Marcus Oyelaran', role:'Hardware Lead, Clearpath Sensors', loc:'room_101', start:720, end:765,
+    desc:'Field lessons from deploying ten thousand sensors outside the lab.',
+    kps:['Calibrate in the environment the sensor will live in, not the lab.','Budget power first; features follow the battery.','Log raw readings — you will want them when the model is wrong.'] },
+  { id:'session_014', title:'AI & The Physical World', speaker:'Dr. Elena Park', role:'Robotics Researcher, Meridian Institute', loc:'main_stage', start:840, end:890,
+    desc:'What changes when AI systems stop answering questions and start moving things.',
+    kps:['AI systems increasingly interact with physical environments.','Reliable sensor data is essential.','Engineers should design for failure.','A robot that stops safely beats one that finishes fast.'] },
+  { id:'session_015', title:'Shipping Edge AI on a Budget', speaker:'Wen Li', role:'Founder, Smallframe', loc:'room_101', start:840, end:885,
+    desc:'Getting vision models onto cheap hardware without losing the plot.',
+    kps:['Quantize early and measure accuracy loss on your own data.','A $40 board can run a surprising amount of vision.','Ship an update path before you ship the device.'] },
+  { id:'session_017', title:'Robotics & Automation', speaker:'Tomás Reyes', role:'VP Operations, Northwind Robotics', loc:'room_102', start:930, end:975,
+    desc:'Lessons from putting collaborative robots on a real factory floor.',
+    kps:['Start with the task people hate most, not the one that is easiest to automate.','Operators need a stop button they trust.','Measure uptime per shift, not per demo.'] },
+  { id:'session_020', title:'Career Mixer', speaker:'Career Commons', role:'Hosted with 40 hiring teams', loc:'hall_b', start:1020, end:1110,
+    desc:'Bring your resume. Walk-up intros with recruiters, no sign-up needed.',
+    kps:['Teams hiring interns are marked with an orange lanyard.','Resume printing is free at the Career Commons booth.'] },
+];
+
+const FRIENDS = [
+  { id:'u_david', name:'David Okafor', inAt:'10:42 AM', c:1 },
+  { id:'u_sarah', name:'Sarah Lindqvist', inAt:'11:13 AM', c:2 },
+  { id:'u_michael', name:'Michael Chen', inAt:'12:04 PM', c:3 },
+  { id:'u_amara', name:'Amara Nwosu', inAt:'1:37 PM', c:4 },
+  { id:'u_jonah', name:'Jonah Weiss', inAt:null, c:1 },
+];
+const TOBI = { id:'u_tobi', name:'Tobi Adeyemi', inAt:'2:05 PM', c:2 };
+
+const CHECKS = [
+  ['signin','Open the app and sign in'],
+  ['checkin','Check in by scanning the event QR'],
+  ['map','Open the event map'],
+  ['booth','Find a booth and open it'],
+  ['boothScan','Scan the booth QR — it shows as visited'],
+  ['schedule','Open the schedule'],
+  ['session','Open a session and read its key points'],
+  ['note','Save a key point or a personal note'],
+  ['friends','See which friends are here'],
+  ['reopen','Close and reopen the app — progress still there', true],
+  ['offlineSync','Go offline, do something, come back online', true],
+  ['restored','Sign in on a new phone — everything restored', true],
+];
+
+/* ---------------- icons ---------------- */
+const I = {
+  home:'<path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/>',
+  map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17.5 14.5c2.2.3 3.6 1.9 4 4.5"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.2 4.1-6.5 8-6.5s7 2.3 8 6.5"/>',
+  scan:'<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+  mark:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+  cloud:'<path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 9.1 4.5 4.5 0 0 0 7 18z"/>',
+  cloudoff:'<path d="M3 3l18 18M8.5 6.2A6 6 0 0 1 17.6 10a4 4 0 0 1 2.3 6.8M16 18H7a4.5 4.5 0 0 1-2.2-8.4"/>',
+  pin:'<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  arrowL:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  arrowR:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  arrowD:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  shield:'<path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/>',
+  trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+  wifi:'<path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/>',
+  phone:'<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>',
+  reload:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+  erase:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+};
+const icon = (n, cls='') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+
+/* ---------------- helpers ---------------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2, 9);
+const clone = o => JSON.parse(JSON.stringify(o));
+const initials = n => String(n).trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const booth = id => BOOTHS.find(b => b.id === id);
+const sess = id => SESSIONS.find(s => s.id === id);
+const placeOf = id => PLACES.find(p => p.id === id);
+const hm = m => { m = Math.floor(m); let h = Math.floor(m / 60), mm = m % 60; const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return { t:`${h}:${String(mm).padStart(2,'0')}`, ap }; };
+const fmtMin = m => { const x = hm(m); return `${x.t} ${x.ap}`; };
+const hashStr = s => { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+
+/* storage with in-memory fallback */
+const mem = {};
+const store = {
+  get(k){ try { const v = localStorage.getItem(k); if (v != null) return JSON.parse(v); } catch(e){} return mem[k] ? clone(mem[k]) : null; },
+  set(k, v){ mem[k] = clone(v); try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
+  del(k){ delete mem[k]; try { localStorage.removeItem(k); } catch(e){} },
+};
+const K = { server:'ec.server.v1', local:'ec.local.v1', demo:'ec.demo.v1' };
+
+/* ---------------- state ---------------- */
+let server, local, demo, ui;
+const freshLocal = () => ({ online:true, email:null, cache:null, queue:[], log:[], drafts:{}, route:{ tab:'home', detail:null } });
+const freshUi = () => ({ booting:false, scan:null, sel:null, filter:'all', q:'', confirm:null, loginErr:'', prefill:null });
+function loadAll(){
+  server = store.get(K.server) || { users:{} };
+  local = store.get(K.local) || freshLocal();
+  demo = store.get(K.demo) || {};
+  if (!demo.clockBase) { demo.clockBase = Date.now(); store.set(K.demo, demo); }
+}
+const saveServer = () => store.set(K.server, server);
+const saveLocal = () => { if (local) store.set(K.local, local); };
+function tick(flag){ if (demo && !demo[flag]) { demo[flag] = Date.now(); store.set(K.demo, demo); renderPanel(); } }
+
+/* event clock: starts at 2:20 PM the first time the demo opens, then runs in real time */
+const evMin = ts => Math.min(1439, 860 + (ts - demo.clockBase) / 60000);
+const nowMin = () => evMin(Date.now());
+const fmtTs = ts => fmtMin(evMin(ts));
+const status = s => s.end <= nowMin() ? 'past' : s.start <= nowMin() ? 'live' : 'next';
+
+/* ---------------- sync engine ---------------- */
+const newUser = (name, email) => ({ name, email, checkedInAt:null, visits:{}, attended:{}, saved:{}, notes:[], visible:true, friendReq:'pending' });
+function reduce(u, a){
+  const p = a.payload;
+  switch (a.type) {
+    case 'checkin': if (!u.checkedInAt) u.checkedInAt = a.at; break;
+    case 'visit': if (!u.visits[p.booth]) u.visits[p.booth] = { at:a.at, via:p.via }; break;
+    case 'attend': if (!u.attended[p.session]) u.attended[p.session] = { at:a.at, via:p.via }; break;
+    case 'save_point': u.saved[p.point] = a.at; break;
+    case 'unsave_point': delete u.saved[p.point]; break;
+    case 'note_add': if (!u.notes.some(n => n.id === p.id)) u.notes.push({ id:p.id, session:p.session, content:p.content, at:a.at }); break;
+    case 'note_delete': u.notes = u.notes.filter(n => n.id !== p.id); break;
+    case 'visibility': u.visible = p.visible; break;
+    case 'friend_req': u.friendReq = p.status; break;
+  }
+  return u;
+}
+function dispatch(type, payload = {}){
+  const a = { id:uid(), type, payload, at:Date.now(), offline:!local.online };
+  reduce(local.cache, a);
+  local.queue.push(a);
+  saveLocal(); render(); flushSoon();
+  return a;
+}
+let flushTimer = null;
+function flushSoon(){
+  if (!local || !local.online || flushTimer || !local.queue.length) return;
+  flushTimer = setTimeout(flush, 900);
+}
+function flush(){
+  flushTimer = null;
+  if (!local || !local.online || !local.email) return;
+  const u = server.users[local.email];
+  if (!u) return;
+  const batch = local.queue.splice(0);
+  batch.forEach(a => { reduce(u, a); local.log.unshift({ type:a.type, payload:a.payload, at:a.at, synced:Date.now() }); });
+  local.log = local.log.slice(0, 6);
+  saveServer(); saveLocal();
+  if (batch.some(a => a.offline)) tick('offlineSync');
+  render();
+}
+const pending = pred => local.queue.some(pred);
+function describe(a){
+  const p = a.payload;
+  switch (a.type) {
+    case 'checkin': return 'Event check-in';
+    case 'visit': return 'Visited ' + booth(p.booth).name;
+    case 'attend': return 'Attended ' + sess(p.session).title;
+    case 'save_point': return 'Saved a key point';
+    case 'unsave_point': return 'Removed a saved point';
+    case 'note_add': return 'Note · ' + sess(p.session).title;
+    case 'note_delete': return 'Deleted a note';
+    case 'visibility': return p.visible ? 'Visible to friends' : 'Hidden from friends';
+    case 'friend_req': return p.status === 'accepted' ? 'Accepted Tobi’s request' : 'Declined Tobi’s request';
+  }
+  return a.type;
+}
+
+/* ---------------- QR ---------------- */
+function qrSvg(seed){
+  let h = hashStr(seed) | 1;
+  const rnd = () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return (h >>> 0) / 4294967296; };
+  let d = '';
+  const finder = (x, y) => { d += `M${x} ${y}h7v7h-7zM${x+1} ${y+1}v5h5v-5zM${x+2} ${y+2}h3v3h-3z`; };
+  finder(0,0); finder(14,0); finder(0,14);
+  for (let y = 0; y < 21; y++) for (let x = 0; x < 21; x++) {
+    if ((x < 8 && y < 8) || (x > 12 && y < 8) || (x < 8 && y > 12)) continue;
+    if (rnd() < .48) d += `M${x} ${y}h1v1h-1z`;
+  }
+  return `<svg class="qr" viewBox="-1.5 -1.5 24 24" aria-hidden="true"><rect x="-1.5" y="-1.5" width="24" height="24" fill="#ffffff"/><path d="${d}" fill="#111111" fill-rule="evenodd"/></svg>`;
+}
+function handleCode(code){
+  const [scheme, rest = ''] = code.split('://');
+  const bad = { msg:'That code isn’t part of Horizon Tech Summit. Look for the orange-framed codes.', kind:'warn' };
+  if (scheme === 'event') {
+    const id = rest.replace('checkin/', '');
+    if (id !== EVENT.id) return { msg:'That code is for a different event. The check-in code is at the registration desk.', kind:'warn' };
+    if (local.cache.checkedInAt) return { msg:'You’re already checked in.', kind:'ok' };
+    dispatch('checkin', { event:id, via:'qr' });
+    tick('checkin');
+    return { msg: local.online ? 'Checked in to Horizon Tech Summit' : 'Checked in — waiting to sync', kind:'ok', go:{ tab:'home' } };
+  }
+  if (scheme === 'booth') {
+    const b = booth(rest); if (!b) return bad;
+    const was = local.cache.visits[b.id];
+    if (!was) dispatch('visit', { booth:b.id, via:'qr' });
+    tick('boothScan');
+    return { msg: was ? `You already visited ${b.name}` : `${b.name} marked as visited`, kind:'ok', go:{ detail:{ kind:'booth', id:b.id } } };
+  }
+  if (scheme === 'session') {
+    const s = sess(rest); if (!s) return bad;
+    if (status(s) === 'next') return { msg:`“${s.title}” hasn’t started yet.`, kind:'warn', go:{ detail:{ kind:'session', id:s.id } } };
+    if (!local.cache.attended[s.id]) dispatch('attend', { session:s.id, via:'qr' });
+    return { msg:'Session marked as attended', kind:'ok', go:{ detail:{ kind:'session', id:s.id } } };
+  }
+  return bad;
+}
+
+/* ---------------- views ---------------- */
+function viewScreen(){
+  if (ui.booting) return `<div class="splash"><span class="mark lg">EC</span><span>Restoring your event…</span><div class="bar"><i></i></div></div>`;
+  if (!local.email) return landing();
+  const inner = local.cache.checkedInAt ? shell() : entry();
+  return inner + (ui.scan ? scanner() : '');
+}
+
+function landing(){
+  const pf = ui.prefill || { name:'Ada Morgan', email:'ada.morgan@example.com' };
+  return `<div class="land">
+    <div class="land-top">
+      <div class="wordmark"><span class="mark">EC</span>Event Companion</div>
+      <h1>The event<br>remembers <em>you.</em></h1>
+      <p>Check in, find booths, follow sessions and keep your notes — even if your phone dies halfway through the day.</p>
+      <div class="signstrip"><span>${icon('arrowL')}Hall A</span><span>Main Stage${icon('arrowR')}</span></div>
+    </div>
+    <form class="land-form" id="login" novalidate>
+      <label for="in-name">Your name</label>
+      <input id="in-name" name="name" autocomplete="name" value="${esc(pf.name)}">
+      <label for="in-email">Email</label>
+      <input id="in-email" name="email" type="email" autocomplete="email" value="${esc(pf.email)}">
+      ${ui.loginErr ? `<p class="err" role="alert">${esc(ui.loginErr)}</p>` : ''}
+      <button class="btn primary block" type="submit">Continue</button>
+      <p class="fine">Example details are filled in. Your progress is saved to your account, not this phone — sign in with the same email on any device to pick up where you left off.</p>
+    </form>
+  </div>`;
+}
+
+function entry(){
+  const u = local.cache;
+  return `<div class="app">
+    <header class="appbar"><div class="ab-event"><span class="mark">EC</span><div><b>Event Companion</b><small>Signed in as ${esc(u.name)}</small></div></div>
+      <div class="ab-right">${syncPill()}</div></header>
+    <div class="scroll" data-key="entry">
+      <p class="eyebrow">Step 1 of 1</p>
+      <h1 class="display">Scan the event QR to check in</h1>
+      <p class="lede">You’ll find it at the registration desk and on your printed ticket.</p>
+      <div class="event-card">
+        <span class="mono" style="color:var(--ink-3)">${EVENT.id}</span>
+        <h2>${EVENT.name} ${EVENT.year}</h2>
+        <p>${EVENT.date} · ${EVENT.venue}</p>
+        <p>60+ exhibitors · 7 sessions today</p>
+      </div>
+      <button class="btn primary block" data-act="scan" data-arg="event">${icon('scan')} Scan event QR</button>
+      <p class="fine">QR codes only carry an ID, like <span class="mono">event://checkin/evt_001</span>. The server checks that ID — nothing personal is in the code.</p>
+      <button class="btn ghost" data-act="signout">Not ${esc(u.name.split(' ')[0])}? Sign out</button>
+      ${confirmSignout()}
+    </div>
+  </div>`;
+}
+
+function shell(){
+  const r = local.route, d = r.detail;
+  const views = { home, map:mapView, schedule, friends, profile };
+  const body = d ? (d.kind === 'booth' ? boothView(d.id) : sessionView(d.id)) : views[r.tab]();
+  const key = d ? d.kind + d.id : r.tab;
+  return `<div class="app">
+    ${appbar(d)}
+    <div class="scroll" data-key="${key}">${body}</div>
+    ${!d && r.tab === 'map' && ui.sel ? sheet(ui.sel) : ''}
+    ${tabbar(d ? null : r.tab)}
+  </div>`;
+}
+
+function appbar(d){
+  const left = d
+    ? `<button class="icon-btn" data-act="back" aria-label="Back">${icon('back')}</button>`
+    : `<div class="ab-event"><span class="mark">EC</span><div><b>${EVENT.name}</b><small>Thu, Sept 24 · Meridian CC</small></div></div>`;
+  return `<header class="appbar">${left}<div class="ab-right">${syncPill()}<button class="icon-btn solid" data-act="scan" data-arg="any" aria-label="Scan a QR code">${icon('scan')}</button></div></header>`;
+}
+function syncPill(){
+  const n = local.queue.length;
+  if (!local.online) return `<button class="pill warn" data-act="go" data-arg="profile">${icon('cloudoff')}Offline${n ? ` · ${n} waiting` : ''}</button>`;
+  if (n) return `<span class="pill">${icon('cloud')}Syncing ${n}…</span>`;
+  return `<span class="pill ok">${icon('check')}Saved</span>`;
+}
+function tabbar(active){
+  const tabs = [['home','Home','home'],['map','Map','map'],['schedule','Schedule','cal'],['friends','Friends','users'],['profile','Profile','user']];
+  return `<nav class="tabbar" aria-label="Main">${tabs.map(([id, l, ic]) =>
+    `<button class="tab" data-act="go" data-arg="${id}" ${active === id ? 'aria-current="page"' : ''}>${icon(ic)}${l}</button>`).join('')}</nav>`;
+}
+
+const friendsList = () => FRIENDS.concat(local.cache.friendReq === 'accepted' ? [TOBI] : []);
+
+function sessionCard(s){
+  const st = status(s), t = hm(s.start), att = local.cache.attended[s.id];
+  const chip = st === 'live' ? '<span class="chip live">Live now</span>' : st === 'next' ? `<span class="chip">Starts ${fmtMin(s.start)}</span>` : '<span class="chip">Ended</span>';
+  return `<button class="scard" data-act="open" data-arg="session:${s.id}">
+    <span class="t"><b>${t.t}</b><small>${t.ap}</small></span>
+    <span class="c">${chip}${att ? ' <span class="chip ok">Attended</span>' : ''}<b>${esc(s.title)}</b><small>${esc(s.speaker)} · ${placeOf(s.loc).name}</small></span>
+  </button>`;
+}
+
+function home(){
+  const u = local.cache;
+  const here = friendsList().filter(f => f.inAt);
+  const v = Object.keys(u.visits).length;
+  const live = SESSIONS.filter(s => status(s) === 'live');
+  const next = SESSIONS.find(s => status(s) === 'next');
+  const inPending = pending(a => a.type === 'checkin');
+  return `
+    <div class="stack" style="gap:6px"><p class="eyebrow">Event clock · ${fmtMin(nowMin())}</p><h1 class="display">Welcome, ${esc(u.name.split(' ')[0])}</h1></div>
+    <div class="badge">
+      <span class="badge-hole"></span>
+      <div class="badge-band"><span>${EVENT.name}</span><span>${EVENT.year}</span></div>
+      <span class="badge-role">Attendee</span>
+      <div class="badge-name">${esc(u.name)}</div>
+      <div class="badge-id mono">usr_${hashStr(u.email).toString(36).slice(0,6)} · ${EVENT.id}</div>
+      <div class="badge-foot">${icon('check')} Checked in ${fmtTs(u.checkedInAt)}${inPending ? '<span class="wait">· waiting to sync</span>' : ''}</div>
+    </div>
+    <div class="tiles">
+      <button class="tile" data-act="go" data-arg="friends"><span class="tile-n">${here.length}</span><span class="tile-l">friends here</span>
+        <span class="avs">${here.slice(0,4).map(f => `<span class="av c${f.c}">${initials(f.name)}</span>`).join('')}</span></button>
+      <button class="tile" data-act="go" data-arg="map"><span class="tile-n">${v}<small>/${BOOTHS.length}</small></span><span class="tile-l">booths visited</span>
+        <span class="meter"><i style="width:${v / BOOTHS.length * 100}%"></i></span></button>
+    </div>
+    <h2 class="label">Happening now</h2>
+    ${live.length ? live.map(sessionCard).join('') : '<p class="empty">Nothing on right now.</p>'}
+    ${next ? `<h2 class="label">Up next</h2>${sessionCard(next)}` : ''}
+    <div class="row2"><button class="btn" data-act="go" data-arg="map">${icon('map')}View map</button><button class="btn" data-act="go" data-arg="schedule">${icon('cal')}Schedule</button></div>`;
+}
+
+const FILTERS = [['all','All'],['booth','Booths'],['rooms','Stages & rooms'],['food','Food'],['services','Services']];
+function allPlaces(){
+  return BOOTHS.map(b => ({ id:b.id, type:'booth', name:b.name, sub:`Booth ${b.num} · ${b.cat}`, b }))
+    .concat(PLACES.map(p => ({ id:p.id, type:p.type, name:p.name, sub:typeLabel(p.type), p })));
+}
+function typeLabel(t){ return { booth:'Booth', stage:'Stage', room:'Session room', food:'Food & drink', service:'Services', entrance:'Entrance' }[t]; }
+function matches(it){
+  const f = ui.filter, q = ui.q.trim().toLowerCase();
+  const fOk = f === 'all' || (f === 'booth' && it.type === 'booth') || (f === 'rooms' && (it.type === 'stage' || it.type === 'room'))
+    || (f === 'food' && it.type === 'food') || (f === 'services' && (it.type === 'service' || it.type === 'entrance'));
+  const qOk = !q || it.name.toLowerCase().includes(q) || it.sub.toLowerCase().includes(q);
+  return fOk && qOk;
+}
+function mapSvg(){
+  const items = allPlaces(), m = {};
+  items.forEach(it => m[it.id] = matches(it));
+  const u = local.cache;
+  const areas = PLACES.filter(p => p.area).map(p => {
+    const a = p.area, cx = a.x + a.w / 2, cy = p.id === 'main_stage' ? a.y + a.h / 2 + 3 : a.y + a.h / 2 + .9;
+    return `<g class="${m[p.id] ? '' : 'dim'}"><rect class="m-area k-${p.type === 'stage' ? 'stage' : p.type} ${ui.sel === p.id ? 'sel' : ''}" x="${a.x}" y="${a.y}" width="${a.w}" height="${a.h}" rx="1.2" data-act="sel" data-arg="${p.id}" role="button" tabindex="0" aria-label="${esc(p.name)}"/>
+      <text class="m-lbl" x="${cx}" y="${cy}">${p.name.toUpperCase()}</text></g>`;
+  }).join('');
+  const booths = BOOTHS.map(b => `<g class="m-booth ${u.visits[b.id] ? 'visited' : ''} ${ui.sel === b.id ? 'sel' : ''} ${m[b.id] ? '' : 'dim'}" data-act="sel" data-arg="${b.id}" role="button" tabindex="0" aria-label="${esc(b.name)}, booth ${b.num}${u.visits[b.id] ? ', visited' : ''}">
+      <rect x="${b.x - 4.5}" y="${b.y - 5}" width="9" height="10" rx=".8"/><text x="${b.x}" y="${b.y + .2}">${u.visits[b.id] ? '✓' : b.num}</text></g>`).join('');
+  const pins = PLACES.filter(p => p.pin).map(p => `<g class="m-pin ${p.type} ${ui.sel === p.id ? 'sel' : ''} ${m[p.id] ? '' : 'dim'}" data-act="sel" data-arg="${p.id}" role="button" tabindex="0" aria-label="${esc(p.name)}">
+      <circle class="hit" cx="${p.pin.x}" cy="${p.pin.y}" r="5"/><circle class="p" cx="${p.pin.x}" cy="${p.pin.y}" r="3.2"/><text x="${p.pin.x}" y="${p.pin.y + .15}">${p.glyph}</text></g>`).join('');
+  return `<svg class="map" viewBox="0 0 100 122" role="group" aria-label="Floor plan of ${EVENT.venue}">
+    <rect class="m-floor" x="1" y="3" width="98" height="116" rx="2"/>
+    <line class="m-door" x1="24" y1="3" x2="36" y2="3"/><line class="m-door" x1="44" y1="119" x2="56" y2="119"/>
+    <rect class="m-area k-hall" x="4" y="18" width="54" height="52" rx="1.2"/>
+    <text class="m-lbl" x="31" y="42">HALL A · EXPO</text>
+    ${areas}
+    <rect class="m-deco" x="66" y="21" width="26" height="5" rx=".8"/>
+    ${booths}${pins}
+  </svg>`;
+}
+function mapView(){
+  const u = local.cache, v = Object.keys(u.visits).length;
+  const list = allPlaces().filter(matches);
+  return `
+    <h1 class="display md">Event map</h1>
+    <div class="search">${icon('search')}<label class="sr" for="map-q">Find a booth or place</label><input id="map-q" placeholder="Find a booth, room or restroom" value="${esc(ui.q)}" autocomplete="off"></div>
+    <div class="chips" role="group" aria-label="Filter map">${FILTERS.map(([id, l]) => `<button class="fchip" data-act="filter" data-arg="${id}" aria-pressed="${ui.filter === id}">${l}</button>`).join('')}</div>
+    <div class="map-wrap">${mapSvg()}</div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--surface)"></i>Booth</span>
+      <span><i class="sw" style="background:var(--ok);border-color:var(--ok)"></i>Visited</span>
+      <span><i class="sw" style="background:var(--m-stage)"></i>Stage</span>
+      <span><i class="sw" style="background:var(--m-room)"></i>Rooms</span>
+      <span><i class="sw" style="background:var(--m-food)"></i>Food</span>
+      <span><i class="sw" style="background:var(--accent);border-color:var(--accent)"></i>Entrance</span>
+    </div>
+    <p class="fine">Floor plan, not live GPS — tap a spot for details. Friends are never placed on the map.</p>
+    <h2 class="label">${list.length ? `${list.length} places · ${v} of ${BOOTHS.length} booths visited` : 'No matches'}</h2>
+    <ul class="list">${list.map(it => {
+      const vis = it.type === 'booth' && u.visits[it.id];
+      return `<li><button class="lrow" data-act="${it.type === 'booth' ? 'open' : 'sel'}" data-arg="${it.type === 'booth' ? 'booth:' + it.id : it.id}">
+        <span><b>${esc(it.name)}</b><small>${esc(it.sub)}</small></span>${vis ? '<span class="chip ok">Visited</span>' : ''}</button></li>`;
+    }).join('')}</ul>
+    ${list.length ? '' : '<p class="empty">Try a booth number like “42” or a category like “Robotics”.</p>'}`;
+}
+function sheet(id){
+  const b = booth(id), u = local.cache;
+  if (b) {
+    const v = u.visits[b.id];
+    return `<div class="sheet" role="dialog" aria-label="${esc(b.name)}">
+      <button class="icon-btn x" data-act="unsel" aria-label="Close">${icon('x')}</button>
+      <p class="eyebrow">Hall A · Booth ${b.num} · ${esc(b.cat)}</p><h3>${esc(b.name)}</h3>
+      <p class="fine" style="color:var(--ink-2)">${v ? `✓ Visited at ${fmtTs(v.at)}` : 'Not visited yet'}</p>
+      <button class="btn dark block" data-act="open" data-arg="booth:${b.id}">View booth</button></div>`;
+  }
+  const p = placeOf(id); if (!p) return '';
+  const here = SESSIONS.filter(s => s.loc === p.id && status(s) !== 'past');
+  return `<div class="sheet" role="dialog" aria-label="${esc(p.name)}">
+    <button class="icon-btn x" data-act="unsel" aria-label="Close">${icon('x')}</button>
+    <p class="eyebrow">${typeLabel(p.type)}</p><h3>${esc(p.name)}</h3>
+    <p class="fine" style="color:var(--ink-2)">${esc(p.desc)}</p>
+    ${here.map(s => `<button class="lrow" style="padding:8px 0" data-act="open" data-arg="session:${s.id}"><span><b>${esc(s.title)}</b><small>${fmtMin(s.start)} · ${esc(s.speaker)}</small></span>${status(s) === 'live' ? '<span class="chip live">Live</span>' : ''}</button>`).join('')}
+  </div>`;
+}
+
+function boothView(id){
+  const b = booth(id), v = local.cache.visits[id];
+  const vp = pending(a => a.type === 'visit' && a.payload.booth === id);
+  return `
+    <div class="sign-hero"><div><div class="sign-dir">${icon('arrowR')}Hall A</div><div class="sign-num">A${b.num}</div></div>${v ? '<span class="stamp">Visited</span>' : ''}</div>
+    <div class="stack" style="gap:6px"><p class="eyebrow">${esc(b.cat)}</p><h1 class="display md">${esc(b.name)}</h1>
+    <p class="meta">${icon('pin')}Hall A — Booth ${b.num}</p></div>
+    ${v
+      ? `<div class="visit ok">${icon('check')}<div><b>Visited at ${fmtTs(v.at)}</b><small>${v.via === 'qr' ? 'Scanned the booth QR' : 'Marked by hand'} · ${vp ? 'waiting to sync' : 'saved to your account'}</small></div></div>`
+      : `<div class="visit">${icon('scan')}<div>Not visited yet. Scan the QR code on the booth’s front counter.</div></div>`}
+    <p class="body">${esc(b.blurb)}</p>
+    <div class="stack">
+      ${v ? '' : `<button class="btn primary block" data-act="scan" data-arg="booth:${b.id}">${icon('scan')}Scan booth QR</button>`}
+      <button class="btn block" data-act="showplace" data-arg="${b.id}">${icon('map')}Show on map</button>
+      ${v ? '' : `<button class="btn ghost" data-act="markvisit" data-arg="${b.id}">No code? Mark as visited</button>`}
+    </div>
+    <p class="payload mono">QR payload · booth://${b.id}</p>`;
+}
+
+function sessionView(id){
+  const s = sess(id), u = local.cache, st = status(s), p = placeOf(s.loc);
+  const att = u.attended[id];
+  const notes = u.notes.filter(n => n.session === id).sort((a, b) => a.at - b.at);
+  const draft = local.drafts[id] || '';
+  const chip = st === 'live' ? '<span class="chip live">Live now</span>' : st === 'next' ? `<span class="chip">Starts ${fmtMin(s.start)}</span>` : '<span class="chip">Ended</span>';
+  let attend;
+  if (att) attend = `<div class="visit ok">${icon('check')}<div><b>Attended · ${fmtTs(att.at)}</b><small>${att.via === 'qr' ? 'Scanned the session QR' : 'Marked by hand'}</small></div></div>`;
+  else if (st === 'live') attend = `<button class="btn primary block" data-act="scan" data-arg="session:${id}">${icon('scan')}Scan session QR to mark attended</button>`;
+  else if (st === 'past') attend = `<button class="btn block" data-act="attend" data-arg="${id}">${icon('check')}I was there</button>`;
+  else attend = '';
+  return `
+    <div class="s-when">${chip}<span class="mono">${fmtMin(s.start)} – ${fmtMin(s.end)}</span></div>
+    <h1 class="display md">${esc(s.title)}</h1>
+    <div class="speaker"><span class="av c${(hashStr(s.speaker) % 4) + 1}">${initials(s.speaker)}</span><div><b>${esc(s.speaker)}</b><small>${esc(s.role)}</small></div></div>
+    <button class="meta link" data-act="showplace" data-arg="${p.id}">${icon('pin')}${p.name}</button>
+    <p class="body">${esc(s.desc)}</p>
+    ${attend}
+    <h2 class="label">Key points</h2>
+    ${st === 'next'
+      ? '<p class="empty">The organiser publishes key points when the session starts.</p>'
+      : `<ol class="kps">${s.kps.map((k, i) => { const pid = `${id}_k${i + 1}`, on = !!u.saved[pid];
+          return `<li><p>${esc(k)}</p><button class="save ${on ? 'on' : ''}" data-act="savept" data-arg="${pid}" aria-pressed="${on}">${icon('mark')}${on ? 'Saved' : 'Save point'}</button></li>`; }).join('')}</ol>`}
+    <h2 class="label">My notes</h2>
+    ${notes.map(n => `<div class="note"><div><p>${esc(n.content)}</p><small>${fmtTs(n.at)}${pending(a => a.type === 'note_add' && a.payload.id === n.id) ? ' · waiting to sync' : ''}</small></div>
+      <button class="icon-btn" data-act="delnote" data-arg="${n.id}" aria-label="Delete note">${icon('trash')}</button></div>`).join('')}
+    <label class="sr" for="note-${id}">New note</label>
+    <textarea id="note-${id}" data-input="draft" data-arg="${id}" placeholder="Write something to remember from this talk…">${esc(draft)}</textarea>
+    <div class="note-actions"><small id="dh-${id}">${draft ? 'Draft kept on this phone' : ''}</small><button class="btn primary" data-act="savenote" data-arg="${id}">Save note</button></div>`;
+}
+
+function schedule(){
+  let nowPlaced = false;
+  const rows = SESSIONS.map(s => {
+    const st = status(s), t = hm(s.start), att = local.cache.attended[s.id];
+    let pre = '';
+    if (!nowPlaced && st === 'next') { nowPlaced = true; pre = `<li class="nowline">Now · ${fmtMin(nowMin())}</li>`; }
+    const chip = st === 'live' ? '<span class="chip live">Live now</span>' : att ? '<span class="chip ok">Attended</span>' : '';
+    return `${pre}<li><button class="srow ${st}" data-act="open" data-arg="session:${s.id}">
+      <span class="t"><b>${t.t}</b><small>${t.ap}</small></span>
+      <span class="c">${chip}<b>${esc(s.title)}</b><small>${esc(s.speaker)} · ${placeOf(s.loc).name}</small></span></button></li>`;
+  }).join('');
+  return `<div class="stack" style="gap:6px"><p class="eyebrow">Today · ${EVENT.date}</p><h1 class="display md">Schedule</h1></div>
+    <ol class="sched">${rows}${nowPlaced ? '' : `<li class="nowline">Now · ${fmtMin(nowMin())}</li>`}</ol>`;
+}
+
+function friends(){
+  const u = local.cache, all = friendsList();
+  const here = all.filter(f => f.inAt), away = all.filter(f => !f.inAt);
+  const row = f => `<li><span class="av c${f.c}">${initials(f.name)}</span><div><b>${esc(f.name)}</b><small>${f.inAt ? `Checked in ${f.inAt}` : 'Hasn’t checked in'}</small></div>${f.inAt ? '<span class="chip ok">Here</span>' : ''}</li>`;
+  return `<h1 class="display md">Friends here</h1>
+    <p class="lede">${here.length} of your friends have checked in to ${EVENT.name}.</p>
+    ${u.friendReq === 'pending' ? `<div class="req"><div class="req-top"><span class="av c${TOBI.c}">${initials(TOBI.name)}</span><div><b>${TOBI.name}</b><small>Wants to connect · friends with David and Sarah</small></div></div>
+      <div class="row2"><button class="btn dark" data-act="freq" data-arg="accepted">Accept</button><button class="btn" data-act="freq" data-arg="declined">Decline</button></div></div>` : ''}
+    <ul class="flist">${here.map(row).join('')}</ul>
+    ${away.length ? `<h2 class="label">Not here yet</h2><ul class="flist">${away.map(row).join('')}</ul>` : ''}
+    <div class="note-box">${icon('shield')}<div>Friends see that you’re at the event, never where you are in the venue. You’re currently <b>${u.visible ? 'visible' : 'hidden'}</b>. <button data-act="go" data-arg="profile">Change</button></div></div>`;
+}
+
+function confirmSignout(){
+  if (ui.confirm !== 'signout') return '';
+  const n = local.queue.length;
+  return `<div class="confirm"><div>${n} change${n === 1 ? '' : 's'} haven’t reached your account yet. Signing out now discards ${n === 1 ? 'it' : 'them'}.</div>
+    <div class="row2"><button class="btn" data-act="cancel">Keep me signed in</button><button class="btn danger" data-act="signout" data-arg="force">Sign out anyway</button></div></div>`;
+}
+
+function profile(){
+  const u = local.cache, n = local.queue.length;
+  const visits = Object.entries(u.visits).sort((a, b) => b[1].at - a[1].at);
+  const saved = Object.entries(u.saved).sort((a, b) => b[1] - a[1]);
+  const notes = [...u.notes].sort((a, b) => b.at - a.at);
+  const kpText = pid => { const m = pid.match(/^(session_\d+)_k(\d+)$/); const s = m && sess(m[1]); return s ? { s, t:s.kps[+m[2] - 1] } : null; };
+  return `
+    <div class="me"><span class="av lg">${initials(u.name)}</span><div><h1 class="display sm">${esc(u.name)}</h1><small>${esc(u.email)}</small></div></div>
+    <h2 class="label">My event</h2>
+    <div class="visit ok">${icon('check')}<div><b>Checked in to ${EVENT.name}</b><small>${fmtTs(u.checkedInAt)} · ${EVENT.venue}</small></div></div>
+    <div class="stats">
+      <div class="stat"><b>${visits.length}<small style="font-size:16px;color:var(--ink-3)">/${BOOTHS.length}</small></b><span>booths visited</span></div>
+      <div class="stat"><b>${Object.keys(u.attended).length}</b><span>sessions attended</span></div>
+      <div class="stat"><b>${notes.length}</b><span>saved notes</span></div>
+      <div class="stat"><b>${saved.length}</b><span>saved key points</span></div>
+    </div>
+    <h2 class="label">Visited booths</h2>
+    ${visits.length ? `<ul class="list">${visits.map(([id, v]) => `<li><button class="lrow" data-act="open" data-arg="booth:${id}"><span><b>${esc(booth(id).name)}</b><small>Booth ${booth(id).num} · ${fmtTs(v.at)}</small></span></button></li>`).join('')}</ul>` : '<p class="empty">No booths yet — scan a booth’s QR code to start your trail.</p>'}
+    <h2 class="label">Saved key points</h2>
+    ${saved.length ? `<ul class="list">${saved.map(([pid]) => { const k = kpText(pid); return k ? `<li><button class="lrow" data-act="open" data-arg="session:${k.s.id}"><span><b style="font-weight:400">${esc(k.t)}</b><small>${esc(k.s.title)}</small></span></button></li>` : ''; }).join('')}</ul>` : '<p class="empty">Save points from any session to collect them here.</p>'}
+    <h2 class="label">My notes</h2>
+    ${notes.length ? `<ul class="list">${notes.map(no => `<li><button class="lrow" data-act="open" data-arg="session:${no.session}"><span><b style="font-weight:400">${esc(no.content)}</b><small>${esc(sess(no.session).title)} · ${fmtTs(no.at)}</small></span></button></li>`).join('')}</ul>` : '<p class="empty">Notes you write in sessions show up here.</p>'}
+    <h2 class="label">Sync</h2>
+    <div class="synccard ${local.online ? '' : 'off'}">
+      <div class="head">${icon(local.online ? (n ? 'cloud' : 'check') : 'cloudoff')}${!local.online ? `Offline — ${n} change${n === 1 ? '' : 's'} saved on this phone` : n ? `Sending ${n} change${n === 1 ? '' : 's'}…` : 'Everything is saved to your account'}</div>
+      ${local.queue.map(a => `<div class="sq"><span>${esc(describe(a))}</span><span class="chip warn">Waiting</span></div>`).join('')}
+      ${local.log.slice(0, 4).map(l => `<div class="sq"><span>${esc(describe(l))}</span><span class="chip ok">Synced</span></div>`).join('')}
+      <p class="fine">Actions are saved on this phone first, then sent to your account. Close the app or lose signal and nothing is lost.</p>
+    </div>
+    <h2 class="label">Privacy</h2>
+    <button class="switch-row" role="switch" aria-checked="${u.visible}" data-act="vis"><span>Show me to friends as attending<small>Only that you’re here — never your location.</small></span><span class="switch"></span></button>
+    <button class="btn danger block" data-act="signout">Sign out</button>
+    ${confirmSignout()}`;
+}
+
+function scanner(){
+  const mode = ui.scan.mode, reading = ui.scan.reading;
+  const tile = (code, label) => `<button class="code" data-act="read" data-arg="${code}">${qrSvg(code)}<span><b>${esc(label)}</b><small class="mono">${code}</small></span></button>`;
+  let groups = [];
+  if (mode === 'event') {
+    groups.push(['At the registration desk', [tile('event://checkin/evt_001', 'Horizon Tech Summit check-in')]]);
+    groups.push(['On a poster nearby', [tile('event://checkin/evt_417', 'Poster from last spring’s expo')]]);
+  } else {
+    const [k, id] = mode.split(':');
+    if (k === 'booth') groups.push(['On this booth’s counter', [tile('booth://' + id, booth(id).name)]]);
+    if (k === 'session') groups.push(['At the room door', [tile('session://' + id, sess(id).title)]]);
+    const live = SESSIONS.filter(s => status(s) === 'live' && s.id !== id);
+    if (live.length) groups.push(['Session doors', live.map(s => tile('session://' + s.id, s.title))]);
+    groups.push(['Booths in Hall A', BOOTHS.filter(b => b.id !== id).map(b => tile('booth://' + b.id, `${b.name} · Booth ${b.num}`))]);
+  }
+  return `<div class="scanner" role="dialog" aria-label="QR scanner">
+    <div class="sc-top"><button class="icon-btn" data-act="closescan" aria-label="Close scanner">${icon('x')}</button><b>Scan QR code</b></div>
+    <div class="viewfinder"><span class="cn a"></span><span class="cn b"></span><span class="cn c"></span><span class="cn d"></span>
+      ${reading ? `<div class="reading">${qrSvg(reading)}<span>Reading code…</span></div>` : '<div class="scanline"></div>'}</div>
+    <p class="sc-hint">The camera is simulated in this prototype. Tap a code to point your phone at it.</p>
+    <div class="codes">${groups.map(([l, t]) => `<p class="eyebrow">${l}</p>${t.join('')}`).join('')}</div>
+  </div>`;
+}
+
+/* ---------------- panel ---------------- */
+function renderPanel(){
+  if (!local) { $('#pctl').innerHTML = '<p class="fine">The app is closed. Reopening…</p>'; return; }
+  const n = local.queue.length;
+  let np = '';
+  if (ui.confirm === 'newphone') np = `<div class="confirm"><div>${n} change${n === 1 ? '' : 's'} on this phone haven’t synced. A new phone won’t have ${n === 1 ? 'it' : 'them'} — that’s the one way to lose data.</div>
+    <div class="row2"><button class="btn" data-act="cancel">Cancel</button><button class="btn danger" data-act="newphone" data-arg="force">Switch anyway</button></div></div>`;
+  if (ui.confirm === 'reset') np = `<div class="confirm"><div>Erase everything, including the simulated server, and start the demo from scratch?</div>
+    <div class="row2"><button class="btn" data-act="cancel">Cancel</button><button class="btn danger" data-act="reset" data-arg="force">Erase</button></div></div>`;
+  $('#pctl').innerHTML = `<div class="ctl">
+    <div class="seg" role="group" aria-label="Connection">
+      <button data-act="net" data-arg="on" aria-pressed="${local.online}"><span class="dot"></span>Online</button>
+      <button class="off" data-act="net" data-arg="off" aria-pressed="${!local.online}"><span class="dot"></span>Offline</button>
+    </div>
+    <button class="btn" data-act="reopen">${icon('reload')}Close &amp; reopen the app<small>crash test</small></button>
+    <button class="btn" data-act="newphone">${icon('phone')}Sign in on a new phone<small>wipes local</small></button>
+    <button class="btn ghost" data-act="reset" style="justify-content:flex-start">${icon('erase')}Reset demo</button>
+    ${np}
+  </div>`;
+  const done = CHECKS.filter(([k]) => demo[k]).length;
+  $('#pprog').textContent = `· ${done} of ${CHECKS.length}`;
+  $('#pcheck').innerHTML = CHECKS.map(([k, l, key]) => `<li class="${demo[k] ? 'done' : ''} ${key ? 'key' : ''}"><span class="box">${demo[k] ? icon('check') : ''}</span>${l}</li>`).join('');
+  const su = local.email && server.users[local.email];
+  const c = local.cache;
+  const drafts = Object.values(local.drafts).filter(Boolean).length;
+  const r = local.route;
+  const where = !local.email ? 'Sign-in' : !c.checkedInAt ? 'Check-in' : r.detail ? (r.detail.kind === 'booth' ? booth(r.detail.id).name : sess(r.detail.id).title) : r.tab[0].toUpperCase() + r.tab.slice(1);
+  const last = local.log[0];
+  $('#players').innerHTML = `
+    <div class="layer"><h4>This phone <span>IndexedDB · local</span></h4><dl>
+      <dt>Signed in</dt><dd>${local.email ? esc(local.email) : '—'}</dd>
+      <dt>Open screen</dt><dd>${esc(where)}</dd>
+      <dt>Waiting to sync</dt><dd style="color:${n ? 'var(--warn)' : 'inherit'}">${n}</dd>
+      <dt>Unsaved drafts</dt><dd>${drafts}</dd></dl></div>
+    <div class="link-arrow ${local.online ? '' : 'paused'}">${icon('arrowD')}${!local.online ? 'Sync paused — offline' : n ? 'Sending…' : last ? `Synced ${fmtTs(last.synced)}` : 'Sync queue empty'}</div>
+    <div class="layer"><h4>Your account <span>server · authoritative</span></h4><dl>
+      <dt>Checked in</dt><dd>${su && su.checkedInAt ? fmtTs(su.checkedInAt) : '—'}</dd>
+      <dt>Booth visits</dt><dd>${su ? Object.keys(su.visits).length : 0}</dd>
+      <dt>Sessions attended</dt><dd>${su ? Object.keys(su.attended).length : 0}</dd>
+      <dt>Notes · saved points</dt><dd>${su ? su.notes.length : 0} · ${su ? Object.keys(su.saved).length : 0}</dd></dl></div>`;
+  const net = $('#sb-net');
+  net.className = 'sb-net' + (local.online ? '' : ' off');
+  net.innerHTML = local.online ? icon('wifi') : 'No signal';
+  $('#sb-time').textContent = hm(nowMin()).t;
+}
+
+/* ---------------- render ---------------- */
+const scrollMem = {};
+function render(){
+  const act = document.activeElement, aid = act && act.id;
+  let s0 = null, s1 = null;
+  try { s0 = act.selectionStart; s1 = act.selectionEnd; } catch(e){}
+  const sc = document.querySelector('#screen .scroll');
+  if (sc) scrollMem[sc.dataset.key] = sc.scrollTop;
+  $('#screen').innerHTML = viewScreen();
+  const sc2 = document.querySelector('#screen .scroll');
+  if (sc2) sc2.scrollTop = scrollMem[sc2.dataset.key] || 0;
+  if (aid && aid !== 'screen') {
+    const el = document.getElementById(aid);
+    if (el && el !== act && /INPUT|TEXTAREA/.test(el.tagName)) { el.focus({ preventScroll:true }); try { if (s0 != null) el.setSelectionRange(s0, s1); } catch(e){} }
+  }
+  renderPanel();
+}
+let toastTimer;
+function toast(msg, kind = 'ok'){
+  const t = $('#toast');
+  t.innerHTML = icon(kind === 'warn' ? 'cloudoff' : 'check') + `<span>${esc(msg)}</span>`;
+  t.className = 'toast show ' + kind;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast ' + kind, 2800);
+}
+
+/* ---------------- actions ---------------- */
+function signIn(name, email){
+  name = name.trim(); email = email.trim().toLowerCase();
+  if (!name || !/^\S+@\S+\.\S+$/.test(email)) { ui.loginErr = 'Enter your name and a valid email to continue.'; render(); return; }
+  if (!local.online) { ui.loginErr = 'Signing in needs a connection. Switch back to Online to continue.'; render(); return; }
+  let u = server.users[email], restored = false;
+  if (u) restored = !!(u.checkedInAt || Object.keys(u.visits).length || u.notes.length);
+  else { u = server.users[email] = newUser(name, email); saveServer(); }
+  local.email = email; local.cache = clone(u); local.queue = []; local.route = { tab:'home', detail:null };
+  ui.loginErr = ''; ui.prefill = null;
+  saveLocal(); tick('signin');
+  if (restored && demo.newPhone) tick('restored');
+  render();
+  if (restored) toast(`Welcome back — restored ${Object.keys(u.visits).length} booth visits and ${u.notes.length} notes from your account.`);
+}
+function goTo(tab){ local.route = { tab, detail:null }; ui.sel = null; ui.confirm = null; saveLocal(); if (['map','schedule','friends'].includes(tab)) tick(tab); render(); }
+function boot(delay, after){
+  clearTimeout(flushTimer); flushTimer = null;
+  server = local = null; ui = { ...freshUi(), booting:true, prefill:ui.prefill };
+  render();
+  setTimeout(() => { const pf = ui.prefill; loadAll(); ui = freshUi(); ui.prefill = pf; render(); flushSoon(); after && after(); }, delay);
+}
+const A = {
+  go: arg => goTo(arg),
+  open(arg){ const [k, id] = arg.split(':'); local.route.detail = { kind:k, id }; ui.sel = null; saveLocal(); tick(k); scrollMem[k + id] = 0; render(); },
+  back(){ local.route.detail = null; saveLocal(); render(); },
+  scan(arg){ ui.scan = { mode:arg, reading:null }; render(); },
+  closescan(){ ui.scan = null; render(); },
+  read(code){
+    if (!ui.scan || ui.scan.reading) return;
+    ui.scan.reading = code; render();
+    setTimeout(() => {
+      if (!ui.scan || ui.scan.reading !== code) return;
+      ui.scan = null;
+      const r = handleCode(code);
+      if (r.go) {
+        if (r.go.tab) local.route = { tab:r.go.tab, detail:null };
+        if (r.go.detail) { local.route.detail = r.go.detail; tick(r.go.detail.kind); scrollMem[r.go.detail.kind + r.go.detail.id] = 0; }
+        saveLocal();
+      }
+      render(); toast(r.msg, r.kind);
+    }, 800);
+  },
+  filter(arg){ ui.filter = arg; ui.sel = null; render(); },
+  sel(arg){ ui.sel = ui.sel === arg ? null : arg; render(); },
+  unsel(){ ui.sel = null; render(); },
+  showplace(arg){ scrollMem.map = 0; local.route = { tab:'map', detail:null }; ui.sel = arg; ui.filter = 'all'; ui.q = ''; saveLocal(); tick('map'); render(); },
+  markvisit(id){ if (!local.cache.visits[id]) { dispatch('visit', { booth:id, via:'manual' }); toast(`${booth(id).name} marked as visited`); } },
+  attend(id){ if (!local.cache.attended[id]) { dispatch('attend', { session:id, via:'manual' }); toast('Session marked as attended'); } },
+  savept(id){ const on = !!local.cache.saved[id]; dispatch(on ? 'unsave_point' : 'save_point', { point:id }); if (!on) { tick('note'); toast('Key point saved'); } },
+  savenote(sid){
+    const d = (local.drafts[sid] || '').trim();
+    if (!d) { toast('Write your note first, then save it.', 'warn'); document.getElementById('note-' + sid)?.focus(); return; }
+    delete local.drafts[sid];
+    const el = document.getElementById('note-' + sid); if (el) el.value = '';
+    dispatch('note_add', { id:'note_' + uid(), session:sid, content:d });
+    tick('note');
+    toast(local.online ? 'Note saved to your account' : 'Note saved on this phone — it will sync when you’re back online', local.online ? 'ok' : 'warn');
+  },
+  delnote(id){ dispatch('note_delete', { id }); toast('Note deleted'); },
+  vis(){ dispatch('visibility', { visible:!local.cache.visible }); },
+  freq(arg){ dispatch('friend_req', { status:arg }); toast(arg === 'accepted' ? 'You’re now friends with Tobi — they’re here too.' : 'Request declined'); },
+  signout(arg){
+    if (local.queue.length && arg !== 'force') { ui.confirm = 'signout'; render(); return; }
+    ui.prefill = { name:local.cache.name, email:local.email };
+    const online = local.online;
+    local = freshLocal(); local.online = online; saveLocal(); ui.confirm = null; ui.scan = null; render();
+  },
+  cancel(){ ui.confirm = null; render(); },
+  net(arg){
+    const on = arg === 'on'; if (on === local.online) return;
+    local.online = on; saveLocal();
+    const n = local.queue.length;
+    if (on) { flushSoon(); toast(n ? `Back online — sending ${n} saved change${n === 1 ? '' : 's'}` : 'Back online'); }
+    else { clearTimeout(flushTimer); flushTimer = null; toast('You’re offline. Actions will wait safely on this phone.', 'warn'); }
+    render();
+  },
+  reopen(){
+    if (!local) return;
+    const had = !!(local.email && local.cache && local.cache.checkedInAt);
+    boot(1200, () => { if (had) { tick('reopen'); toast('Reopened — everything is where you left it.'); } });
+  },
+  newphone(arg){
+    if (!local) return;
+    if (local.queue.length && arg !== 'force') { ui.confirm = 'newphone'; render(); return; }
+    ui.prefill = local.cache ? { name:local.cache.name, email:local.email } : null;
+    demo.newPhone = Date.now(); store.set(K.demo, demo);
+    store.del(K.local);
+    boot(900, () => toast('New phone, nothing stored locally. Sign in with the same email.', 'warn'));
+  },
+  reset(arg){
+    if (arg !== 'force') { ui.confirm = 'reset'; render(); return; }
+    store.del(K.server); store.del(K.local); store.del(K.demo);
+    ui.prefill = null;
+    boot(500);
+  },
+};
+
+function runAct(el, e){ const f = A[el.dataset.act]; if (f) { e && e.preventDefault(); f(el.dataset.arg, el); } }
+document.addEventListener('click', e => { const t = e.target.closest('[data-act]'); if (t && !ui.booting) runAct(t, e); });
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[data-act]:not(button)')) runAct(e.target, e);
+  if (e.key === 'Escape' && ui.scan) A.closescan();
+});
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'login') return;
+  e.preventDefault();
+  const f = new FormData(e.target);
+  signIn(String(f.get('name') || ''), String(f.get('email') || ''));
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'map-q') { ui.q = t.value; ui.sel = null; render(); }
+  else if (t.dataset && t.dataset.input === 'draft') {
+    local.drafts[t.dataset.arg] = t.value; saveLocal();
+    const h = document.getElementById('dh-' + t.dataset.arg); if (h) h.textContent = t.value ? 'Draft kept on this phone' : '';
+    renderPanel();
+  }
+});
+
+/* ---------------- start ---------------- */
+loadAll();
+ui = freshUi();
+render();
+flushSoon();
+if (local.email && local.cache && local.cache.checkedInAt) { tick('reopen'); toast('Welcome back — restored where you left off.'); }
+setInterval(() => { if (!ui.booting && local && !ui.scan && !(document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName))) render(); }, 30000);
+</script>
