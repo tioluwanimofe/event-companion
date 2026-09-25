@@ -1,3 +1,10 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Clickable prototype of the Event Companion MVP: QR check-in, venue map, booth tracking, sessions, friends and offline-safe sync.">
+<meta name="theme-color" content="#15191C">
 <title>Event Companion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,7 +48,9 @@
   --shadow:0 40px 80px -40px rgba(0,0,0,.9);
 }
 *{box-sizing:border-box}
-body{background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:15px;padding-inline:16px;padding-block:28px}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:15px;padding-inline:16px;padding-block:28px}
+img{max-width:100%}
+[hidden]{display:none!important}
 button{font:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -357,6 +366,8 @@ textarea{width:100%;min-height:96px;border:1px solid var(--line);border-radius:1
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
 </style>
+</head>
+<body>
 
 <div class="stage">
   <div class="phone" id="phone">
@@ -1171,3 +1182,5 @@ flushSoon();
 if (local.email && local.cache && local.cache.checkedInAt) { tick('reopen'); toast('Welcome back — restored where you left off.'); }
 setInterval(() => { if (!ui.booting && local && !ui.scan && !(document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName))) render(); }, 30000);
 </script>
+</body>
+</html>

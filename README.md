@@ -13,7 +13,9 @@ A mobile-first event app for attendees: check in with a QR code, find booths on 
 
 ## Running the prototype
 
-Open `index.html` in any modern browser (double-click it). There's no build step and nothing to install.
+**Live demo: https://tioluwanimofe.github.io/event-companion/** (works on phones too)
+
+Or open `index.html` in any modern browser (double-click it). There's no build step and nothing to install.
 
 The page shows the app in a phone frame, with a control panel beside it for testing the persistence requirements from the spec:
 
