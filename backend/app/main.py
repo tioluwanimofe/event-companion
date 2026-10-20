@@ -3,10 +3,11 @@ from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
 from app.db import get_db
-from app.routers import admin
+from app.routers import admin, public
 
 app = FastAPI(title="Event Companion API")
 app.include_router(admin.router)
+app.include_router(public.router)
 
 
 @app.get("/health")

@@ -68,3 +68,22 @@ def event(client):
     })
     assert response.status_code == 201
     return response.json()
+
+
+def make_event(client, slug, starts_at, ends_at):
+    response = client.post("/admin/events", json={
+        "slug": slug, "name": slug.upper(), "starts_at": starts_at, "ends_at": ends_at})
+    assert response.status_code == 201, response.text
+    return response.json()
+
+
+@pytest.fixture
+def cdc(client):
+    """An event shaped like CyberDataCon: one day in April, Nashville time."""
+    return make_event(client, "cdc", "2027-04-16T07:30:00-05:00", "2027-04-16T18:00:00-05:00")
+
+
+def upload_csv(client, path: str, content: bytes | str):
+    if isinstance(content, str):
+        content = content.encode("utf-8")
+    return client.post(path, files={"file": ("upload.csv", content, "text/csv")})
