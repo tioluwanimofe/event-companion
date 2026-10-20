@@ -4,7 +4,8 @@ Thumbs.db
 desktop.ini
 
 # Editors
-.vscode/
+.vscode/*
+!.vscode/tasks.json
 .idea/
 
 # Dependencies and builds (for the future Next.js app)

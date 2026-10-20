@@ -1,0 +1,41 @@
+{
+  // One-click buttons for the backend.
+  // In VS Code: Terminal menu -> Run Task... -> pick one.
+  "version": "2.0.0",
+  "options": { "cwd": "${workspaceFolder}/backend" },
+  "tasks": [
+    {
+      "label": "1. Install / update Python packages",
+      "detail": "Installs everything listed in backend/requirements.txt into the .venv",
+      "type": "process",
+      "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+      "args": ["-m", "pip", "install", "-r", "requirements.txt"],
+      "problemMatcher": []
+    },
+    {
+      "label": "2. Build / update database tables",
+      "detail": "Alembic applies any new migrations to your local Postgres",
+      "type": "process",
+      "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+      "args": ["-m", "alembic", "upgrade", "head"],
+      "problemMatcher": []
+    },
+    {
+      "label": "3. Start the API",
+      "detail": "Runs FastAPI; open http://127.0.0.1:8000/docs in your browser. Stop with the trash-can icon.",
+      "type": "process",
+      "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+      "args": ["-m", "fastapi", "dev", "app/main.py"],
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Undo the last database migration",
+      "detail": "Careful: removes the tables/columns the last migration added",
+      "type": "process",
+      "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+      "args": ["-m", "alembic", "downgrade", "-1"],
+      "problemMatcher": []
+    }
+  ]
+}

@@ -161,6 +161,7 @@ erDiagram
   says the email is verified and it matches, we fill in `google_sub` on that row.
 - **Friends:** deferred out of v1. Dr. Simmons didn't ask for it; agenda + booth lead
   exchange come first.
-- **Local development database:** native PostgreSQL 17 on Windows (not Docker, not hosted).
+- **Local development database:** native PostgreSQL on Windows (not Docker, not hosted).
+  We use the PostgreSQL 16 server installed on 2026-10-15 (supported until Nov 2028).
 
 Design choices 1–6 reviewed and accepted by Tio on 2026-10-20.
