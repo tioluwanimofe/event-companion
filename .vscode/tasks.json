@@ -30,6 +30,23 @@
       "problemMatcher": []
     },
     {
+      "label": "4. Run tests",
+      "detail": "Runs every automated test against your _test database (needs TEST_DATABASE_URL in backend/.env)",
+      "type": "process",
+      "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+      "args": ["-m", "pytest"],
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "1b. Install test tools",
+      "detail": "Installs pytest (only needed once, for task 4)",
+      "type": "process",
+      "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+      "args": ["-m", "pip", "install", "-r", "requirements-dev.txt"],
+      "problemMatcher": []
+    },
+    {
       "label": "Undo the last database migration",
       "detail": "Careful: removes the tables/columns the last migration added",
       "type": "process",
