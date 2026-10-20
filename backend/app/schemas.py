@@ -20,8 +20,8 @@ class EventCreate(BaseModel):
     venue: str | None = Field(None, max_length=200, examples=["Lipscomb University"])
     timezone: str = Field("America/Chicago", examples=["America/Chicago"])
     # AwareDatetime = must include a time zone offset, e.g. -05:00
-    starts_at: AwareDatetime = Field(examples=["2027-04-16T08:00:00-05:00"])
-    ends_at: AwareDatetime = Field(examples=["2027-04-16T17:00:00-05:00"])
+    starts_at: AwareDatetime = Field(examples=["2027-04-16T07:30:00-05:00"])
+    ends_at: AwareDatetime = Field(examples=["2027-04-16T18:00:00-05:00"])
 
     @field_validator("timezone")
     @classmethod
@@ -84,3 +84,72 @@ class ImportReport(BaseModel):
     updated: int = Field(description="People already here whose details changed")
     unchanged: int = Field(description="People already here, nothing new")
     skipped: list[SkippedRow]
+
+
+# Agenda and booth imports -------------------------------------------------------
+
+class RowProblem(BaseModel):
+    row: int = Field(description="Row number as shown in Excel (row 1 is the header)")
+    item: str | None = Field(description="Session title or booth name, if we could read it")
+    reason: str
+
+
+class ScheduleImportReport(BaseModel):
+    event_slug: str
+    rows_read: int
+    created: int = Field(description="New sessions or booths")
+    updated: int = Field(description="Already here, details changed")
+    unchanged: int = Field(description="Already here, nothing new")
+    people_created: int = Field(description="New users made for speakers or booth owners")
+    skipped: list[RowProblem] = Field(description="Rows NOT saved, and why")
+    warnings: list[RowProblem] = Field(description="Rows saved, but something needs a look")
+
+
+class AgendaImportReport(ScheduleImportReport):
+    rooms_created: int
+
+
+# Public agenda ---------------------------------------------------------------
+
+class SpeakerOut(BaseModel):
+    """Public: name and company only. No email."""
+    name: str
+    company: str | None
+
+
+class SessionOut(BaseModel):
+    id: uuid.UUID
+    title: str
+    description: str | None
+    track: str | None
+    kind: str
+    room: str | None
+    building: str | None
+    starts_at: datetime = Field(description="In the event's local time zone")
+    ends_at: datetime
+    speakers: list[SpeakerOut]
+
+
+class AgendaOut(BaseModel):
+    event_slug: str
+    event_name: str
+    timezone: str
+    sessions: list[SessionOut]
+
+
+# Booths (admin view) ---------------------------------------------------------------
+
+class PersonBrief(BaseModel):
+    name: str
+    email: str
+
+
+class BoothOut(BaseModel):
+    id: uuid.UUID
+    name: str
+    description: str | None
+    location_label: str | None
+    preloaded_notes: str | None
+    owners: list[PersonBrief]
+    qr_link: str = Field(description="What the printed QR code contains")
+    qr_image: str = Field(description="Open this path to see/print the QR code")

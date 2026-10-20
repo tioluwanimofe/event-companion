@@ -1,0 +1,16 @@
+Date,Start,End,Title,Type,Track,Room,Building,Speaker,Speaker Email,Description
+2027-04-16,7:30 AM,8:30 AM,Breakfast & Registration,Breakfast,,Swang Atrium,Swang Business Center,,,"Coffee, breakfast, and pick up your badge."
+2027-04-16,8:30 AM,8:50 AM,Welcome & Opening Remarks,Welcome,,Ezell Chapel,Ezell Center,Dr. Alana Brooks,alana.brooks@example.com,
+2027-04-16,9:00 AM,9:50 AM,Securing Connected Medical Devices,Breakout,Healthcare,Ezell 301,Ezell Center,Priya Raman,priya.raman@example.com,What happens when the insulin pump is on the network.
+2027-04-16,9:00 AM,9:50 AM,Attacking and Defending Smart Buildings,Breakout,IoT,Swang 108,Swang Business Center,Marcus Oyelaran,marcus.oyelaran@example.com,
+2027-04-16,10:00 AM,10:50 AM,Mobile App Security in the Real World,Breakout,Mobile Security,Ezell 301,Ezell Center,Wen Li,wen.li@example.com,
+2027-04-16,10:00 AM,10:50 AM,Blockchain Beyond the Hype,Breakout,Blockchain,Swang 108,Swang Business Center,Elena Park; Tomás Reyes,elena.park@example.com; tomas.reyes@example.com,
+2027-04-16,11:00 AM,11:45 AM,Keynote: Defending What Matters,Keynote,,Ezell Chapel,Ezell Center,Dr. Jane Smith,jane.smith@example.com,
+2027-04-16,12:00 PM,2:00 PM,Career Booths & Lunch,Lunch,,3rd Floor,Swang Business Center,,,Meet employers on the 3rd floor. Scan booth QR codes to share your profile.
+2027-04-16,2:00 PM,2:50 PM,Hands-On Pen Testing Lab,Workshop,Pen Testing,Swang 108,Swang Business Center,Tomás Reyes,tomas.reyes@example.com,Bring a laptop.
+2027-04-16,2:00 PM,2:50 PM,Teaching Cybersecurity to the Next Generation,Breakout,Cyber Education,Ezell 301,Ezell Center,Grace Adeyemi,grace.adeyemi@example.com,
+2027-04-16,3:00 PM,3:50 PM,Panel: Careers in Cyber,Panel,,Ezell Chapel,Ezell Center,Priya Raman; Wen Li; Dr. Jane Smith,priya.raman@example.com; wen.li@example.com; jane.smith@example.com,
+2027-04-16,4:00 PM,4:20 PM,Closing Remarks,Closing,,Ezell Chapel,Ezell Center,Dr. Alana Brooks,alana.brooks@example.com,
+2027-04-16,4:30 PM,6:00 PM,Networking Reception,Reception,,Swang Atrium,Swang Business Center,,,
+2027-04-16,4:00 PM,3:00 PM,Time Travel for Beginners,Breakout,,Ezell 301,,,,This row is broken on purpose: it ends before it starts.
+2027-04-16,25:00,26:00,The Session That Never Was,Breakout,,Swang 108,,,,This row is broken on purpose: 25:00 isn't a time.

@@ -4,7 +4,7 @@ from pathlib import Path
 from sqlalchemy import func, select
 
 from app.models import EventRole, User
-from app.registrants import normalize_header
+from app.csv_utils import normalize_header
 
 SAMPLE = Path(__file__).resolve().parent.parent / "sample_data" / "registrants_sample.csv"
 

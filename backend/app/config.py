@@ -18,5 +18,9 @@ class Settings(BaseSettings):
     # Example: postgresql+psycopg://event_app:PASSWORD@localhost:5432/event_companion
     database_url: str
 
+    # Where the attendee app lives. Booth QR codes point here:
+    # {app_base_url}/scan/{qr_token}. Becomes https://app.cyberdatacon.com later.
+    app_base_url: str = "http://localhost:5173"
+
 
 settings = Settings()
