@@ -1,0 +1,4 @@
+# Store text files with LF in the repo; Git converts to the OS default on checkout.
+* text=auto
+*.ps1 text eol=crlf
+*.bat text eol=crlf
