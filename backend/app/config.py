@@ -12,7 +12,8 @@ ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=ENV_FILE)
+    # extra="ignore": other lines in .env (like TEST_DATABASE_URL) are not app settings
+    model_config = SettingsConfigDict(env_file=ENV_FILE, extra="ignore")
 
     # Example: postgresql+psycopg://event_app:PASSWORD@localhost:5432/event_companion
     database_url: str

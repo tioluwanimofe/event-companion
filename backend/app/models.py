@@ -80,6 +80,11 @@ class User(Base):
 
     roles: Mapped[list["EventRole"]] = relationship(back_populates="user")
 
+    @property
+    def has_signed_in(self) -> bool:
+        """Not a column: worked out from google_sub, which stays private."""
+        return self.google_sub is not None
+
 
 # The event and its agenda -------------------------------------------------
 
