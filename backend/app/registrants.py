@@ -5,19 +5,17 @@ event with source="csv_import" (ADR 0003). Running the same file twice is
 safe: people already in the database are updated, never duplicated.
 
 The steps, in order:
-  1. decode_csv      bytes from the upload  -> text
-  2. map_headers     the file's column names -> our field names
-  3. parse_rows      each line -> a clean Registrant, or a reason to skip it
+  1. decode_csv      bytes from the upload  -> text          (csv_utils)
+  2. read_rows       match column names, yield each row      (csv_utils)
+  3. parse_rows      each row -> a clean Registrant, or a reason to skip it
   4. import_registrants  save to the database and count what happened
 """
-import csv
-import io
-import re
 from dataclasses import dataclass
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.csv_utils import EMAIL_PATTERN, decode_csv, read_rows
 from app.models import Event, EventRole, User
 from app.schemas import ImportReport, SkippedRow
 
@@ -42,13 +40,8 @@ MAX_LENGTH = {
 }
 
 PROFILE_FIELDS = ("company", "job_title", "is_student", "university", "major")
-EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 YES = {"yes", "y", "true", "1", "student"}
 NO = {"no", "n", "false", "0"}
-
-
-class CsvFormatError(ValueError):
-    """The file as a whole can't be used (wrong encoding, no email column...)."""
 
 
 @dataclass
@@ -65,44 +58,6 @@ class Registrant:
     major: str | None = None
 
 
-# 1. decode ------------------------------------------------------------------
-
-def decode_csv(raw: bytes) -> str:
-    """Excel adds an invisible "BOM" to UTF-8 files ("utf-8-sig" removes it).
-    Older Windows exports use cp1252, so we try that second."""
-    for encoding in ("utf-8-sig", "cp1252"):
-        try:
-            return raw.decode(encoding)
-        except UnicodeDecodeError:
-            continue
-    raise CsvFormatError("Couldn't read the file. Save it as 'CSV UTF-8' and try again.")
-
-
-# 2. headers -----------------------------------------------------------------
-
-def normalize_header(name: str) -> str:
-    """'Email Address' -> 'email_address', 'Are you a student?' -> 'are_you_a_student'"""
-    return re.sub(r"[^a-z0-9]+", "_", name.strip().lower()).strip("_")
-
-
-def map_headers(fieldnames: list[str] | None) -> dict[str, str]:
-    """Returns {our_field: column name in the file}."""
-    if not fieldnames:
-        raise CsvFormatError("The file is empty or has no header row.")
-    mapping: dict[str, str] = {}
-    for column in fieldnames:
-        key = normalize_header(column or "")
-        for field, aliases in HEADER_ALIASES.items():
-            if key in aliases and field not in mapping:
-                mapping[field] = column
-    if "email" not in mapping:
-        raise CsvFormatError(
-            f"No email column found. Columns in the file: {', '.join(fieldnames)}")
-    if "first_name" not in mapping and "full_name" not in mapping:
-        raise CsvFormatError("No first name (or full name) column found.")
-    return mapping
-
-
 # 3. rows --------------------------------------------------------------------
 
 def parse_yes_no(value: str | None) -> bool | None:
@@ -114,18 +69,13 @@ def parse_yes_no(value: str | None) -> bool | None:
 
 def parse_rows(text: str) -> tuple[list[Registrant], list[SkippedRow], int]:
     """Returns (good rows, skipped rows, number of non-blank rows read)."""
-    reader = csv.DictReader(io.StringIO(text))
-    columns = map_headers(reader.fieldnames)
     good: list[Registrant] = []
     skipped: list[SkippedRow] = []
     first_seen: dict[str, int] = {}  # email -> row number, to catch repeats
     rows_read = 0
 
-    # Row numbers match what you see in Excel: row 1 is the header.
-    for row_number, raw in enumerate(reader, start=2):
-        values = {f: (raw.get(col) or "").strip() for f, col in columns.items()}
-        if not any(values.values()):
-            continue  # completely blank line
+    for row_number, values in read_rows(text, HEADER_ALIASES,
+                                        required=["email", ("first_name", "full_name")]):
         rows_read += 1
 
         def skip(reason: str, email: str | None = None) -> None:

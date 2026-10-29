@@ -166,7 +166,9 @@ class Session(Base):
 
     event: Mapped[Event] = relationship(back_populates="sessions")
     room: Mapped[Room | None] = relationship()
-    speakers: Mapped[list["SessionSpeaker"]] = relationship(back_populates="session")
+    # delete-orphan: removing a link from this list deletes that row
+    speakers: Mapped[list["SessionSpeaker"]] = relationship(
+        back_populates="session", cascade="all, delete-orphan")
 
 
 class SessionSpeaker(Base):
@@ -198,7 +200,8 @@ class Booth(Base):
     qr_token: Mapped[str] = mapped_column(String(64), unique=True, default=new_qr_token)
 
     event: Mapped[Event] = relationship(back_populates="booths")
-    owners: Mapped[list["BoothOwner"]] = relationship(back_populates="booth")
+    owners: Mapped[list["BoothOwner"]] = relationship(
+        back_populates="booth", cascade="all, delete-orphan")
     scans: Mapped[list["BoothScan"]] = relationship(back_populates="booth")
 
 
