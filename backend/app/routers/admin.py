@@ -1,7 +1,10 @@
 """Admin endpoints: set up an event and load its registrants.
 
-⚠️ No login yet. These are for local development only. Before the app goes
-online they must be locked to admins (comes with the Google sign-in ADR).
+Locked (ADR 0004). Every route has one of these guards in `dependencies=`:
+- require_platform_admin: people in ADMIN_EMAILS (creating/listing events)
+- require_event_admin:    an admin of the event in the URL's {slug}
+- require_booth_admin:    an admin of the event the booth belongs to
+Not signed in -> 401. Signed in but not an admin -> 403.
 """
 import html
 import secrets
@@ -12,6 +15,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from app.auth import current_user, require_booth_admin, require_event_admin, require_platform_admin
 from app.db import get_db
 from app.agenda import import_agenda
 from app.booths import booth_out, import_booths, qr_png, qr_svg
@@ -21,7 +25,8 @@ from app.registrants import import_registrants
 from app.schemas import (AgendaImportReport, AttendeeOut, BoothOut, EventCreate, EventOut,
                          ImportReport, ScheduleImportReport)
 
-router = APIRouter(prefix="/admin", tags=["Admin (no login yet, local use only)"])
+# Safety net: even a future route someone forgets to guard needs a signed-in user.
+router = APIRouter(prefix="/admin", tags=["Admin"], dependencies=[Depends(current_user)])
 
 MAX_CSV_BYTES = 5 * 1024 * 1024  # 5 MB is tens of thousands of registrants
 
@@ -33,7 +38,8 @@ def get_event_or_404(db: Session, slug: str) -> Event:
     return event
 
 
-@router.post("/events", response_model=EventOut, status_code=status.HTTP_201_CREATED)
+@router.post("/events", response_model=EventOut, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(require_platform_admin)])
 def create_event(body: EventCreate, db: Session = Depends(get_db)):
     """Create an event. The slug is its short name in links."""
     if db.scalar(select(Event).where(Event.slug == body.slug)):
@@ -44,12 +50,14 @@ def create_event(body: EventCreate, db: Session = Depends(get_db)):
     return event
 
 
-@router.get("/events", response_model=list[EventOut])
+@router.get("/events", response_model=list[EventOut],
+             dependencies=[Depends(require_platform_admin)])
 def list_events(db: Session = Depends(get_db)):
     return db.scalars(select(Event).order_by(Event.starts_at)).all()
 
 
-@router.post("/events/{slug}/registrants/import", response_model=ImportReport)
+@router.post("/events/{slug}/registrants/import", response_model=ImportReport,
+             dependencies=[Depends(require_event_admin)])
 def import_registrants_csv(slug: str, file: UploadFile = File(..., description="CSV export from the CRM"),
                            db: Session = Depends(get_db)):
     """Upload the registrants CSV. Safe to run again with an updated file."""
@@ -68,7 +76,8 @@ def run_import(importer, db: Session, event: Event, file: UploadFile):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(error))
 
 
-@router.get("/events/{slug}/attendees", response_model=list[AttendeeOut])
+@router.get("/events/{slug}/attendees", response_model=list[AttendeeOut],
+             dependencies=[Depends(require_event_admin)])
 def list_attendees(slug: str, db: Session = Depends(get_db)):
     """Everyone with the attendee role at this event, A to Z by last name."""
     event = get_event_or_404(db, slug)
@@ -82,7 +91,8 @@ def list_attendees(slug: str, db: Session = Depends(get_db)):
 
 # Agenda --------------------------------------------------------------------
 
-@router.post("/events/{slug}/agenda/import", response_model=AgendaImportReport)
+@router.post("/events/{slug}/agenda/import", response_model=AgendaImportReport,
+             dependencies=[Depends(require_event_admin)])
 def import_agenda_csv(slug: str, file: UploadFile = File(..., description="Agenda spreadsheet saved as CSV"),
                       db: Session = Depends(get_db)):
     """Upload the agenda. Times are local to the event. Re-upload to update."""
@@ -105,20 +115,23 @@ def event_booths(db: Session, event: Event) -> list[Booth]:
     ).all()
 
 
-@router.post("/events/{slug}/booths/import", response_model=ScheduleImportReport)
+@router.post("/events/{slug}/booths/import", response_model=ScheduleImportReport,
+             dependencies=[Depends(require_event_admin)])
 def import_booths_csv(slug: str, file: UploadFile = File(..., description="Booths spreadsheet saved as CSV"),
                       db: Session = Depends(get_db)):
     """Upload booths and their owners. Re-upload to update; QR codes never change."""
     return run_import(import_booths, db, get_event_or_404(db, slug), file)
 
 
-@router.get("/events/{slug}/booths", response_model=list[BoothOut])
+@router.get("/events/{slug}/booths", response_model=list[BoothOut],
+             dependencies=[Depends(require_event_admin)])
 def list_booths(slug: str, db: Session = Depends(get_db)):
     return [booth_out(b) for b in event_booths(db, get_event_or_404(db, slug))]
 
 
 @router.get("/booths/{booth_id}/qr.png", response_class=Response,
-            responses={200: {"content": {"image/png": {}}}})
+            responses={200: {"content": {"image/png": {}}}},
+            dependencies=[Depends(require_booth_admin)])
 def booth_qr_png(booth_id: uuid.UUID, db: Session = Depends(get_db)):
     """The booth's QR code as an image."""
     booth = get_booth_or_404(db, booth_id)
@@ -126,7 +139,8 @@ def booth_qr_png(booth_id: uuid.UUID, db: Session = Depends(get_db)):
                     headers={"Content-Disposition": f'inline; filename="qr-{booth.name}.png"'})
 
 
-@router.post("/booths/{booth_id}/rotate-qr", response_model=BoothOut)
+@router.post("/booths/{booth_id}/rotate-qr", response_model=BoothOut,
+             dependencies=[Depends(require_booth_admin)])
 def rotate_booth_qr(booth_id: uuid.UUID, db: Session = Depends(get_db)):
     """Give the booth a new secret. Old printed codes stop working: reprint!"""
     booth = get_booth_or_404(db, booth_id)
@@ -135,7 +149,8 @@ def rotate_booth_qr(booth_id: uuid.UUID, db: Session = Depends(get_db)):
     return booth_out(booth)
 
 
-@router.get("/events/{slug}/booths/qr-sheet", response_class=HTMLResponse)
+@router.get("/events/{slug}/booths/qr-sheet", response_class=HTMLResponse,
+             dependencies=[Depends(require_event_admin)])
 def booth_qr_sheet(slug: str, db: Session = Depends(get_db)):
     """A printable page with every booth's QR code. Open it in a new tab, then Ctrl+P."""
     event = get_event_or_404(db, slug)

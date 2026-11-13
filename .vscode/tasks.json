@@ -39,6 +39,14 @@
       "problemMatcher": []
     },
     {
+      "label": "5. Make a secret key",
+      "detail": "Prints a long random string. Paste it into backend/.env as SESSION_SECRET_KEY=",
+      "type": "process",
+      "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+      "args": ["-c", "import secrets; print(secrets.token_urlsafe(48))"],
+      "problemMatcher": []
+    },
+    {
       "label": "1b. Install test tools",
       "detail": "Installs pytest (only needed once, for task 4)",
       "type": "process",
