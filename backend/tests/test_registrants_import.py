@@ -48,7 +48,7 @@ def test_importing_the_same_file_twice_creates_no_duplicates(client, event, db):
 
     assert second["created"] == 0
     assert second["unchanged"] == 8
-    assert db.scalar(select(func.count()).select_from(User)) == 8
+    assert db.scalar(select(func.count()).select_from(User)) == 8 + 1  # + the signed-in admin
     assert db.scalar(select(func.count()).select_from(EventRole)) == 8
 
 

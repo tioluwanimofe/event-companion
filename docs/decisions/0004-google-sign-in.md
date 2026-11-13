@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed**, 2026-11-13. Tio picks an option below, then this becomes Accepted.
+**Accepted**, 2026-11-13. Tio chose **option A**.
 
 ## Context
 
@@ -38,7 +38,7 @@ All three options use Google. The difference is **who talks to Google** and **wh
 | New moving parts | One Python library (Authlib) | Google's JS library + `google-auth` | A whole extra service + account |
 | Adding email sign-in later | We'd build it (magic links) | We'd build it | Built in |
 
-## Recommendation: A
+## Decision: A
 
 ```mermaid
 sequenceDiagram
@@ -62,7 +62,7 @@ sequenceDiagram
     F-->>P: 200 OK, or 403 Forbidden
 ```
 
-Why A:
+Why A was chosen:
 
 1. **It fits ADR 0001.** The server owns both halves: Google proves who you are, and FastAPI decides what you can do.
 2. **You can try it today**, by opening a link in the browser. No React needed yet.
@@ -76,11 +76,11 @@ The cost: if Dr. Simmons later wants **email sign-in** too (open question 4), we
 1. **Keeping you signed in:** a signed session cookie (`HttpOnly`, `Secure`, `SameSite=Lax`), not a token stored in JavaScript. JavaScript can't read the cookie, which protects it from XSS.
 2. **Linking:** match on `google_sub` first. If there's none, match on email, **only if Google says `email_verified` is true**. Otherwise anyone could claim a registrant's email.
 3. **Unknown people:** someone who signs in but isn't in the CSV becomes a user with **no role**. They can see the public agenda, and an admin can grant them a role. *(This one is Dr. Simmons's call; we can change it without a migration.)*
-4. **The lock:** one FastAPI dependency, `require_role("admin")`, on every `/admin` route. It's tested so that an attendee gets `403` and someone not signed in gets `401`.
-5. **The first admin:** set by an `ADMIN_EMAILS` setting in `.env`, so Tio and Dr. Simmons can get in before any roles exist.
+4. **The lock:** a FastAPI dependency on every `/admin` route. Admin rights are **per event**: an `admin` row in `event_roles` lets you manage *that* event only (`require_event_admin`, `require_booth_admin`). Things no event owns yet, like creating an event, need a platform admin (`require_platform_admin`). It's tested so that an attendee gets `403` and someone not signed in gets `401`.
+5. **The first admin:** set by an `ADMIN_EMAILS` setting in `.env`. These platform admins can manage every event, so Tio and Dr. Simmons can get in before any roles exist.
 
 ## Consequences
 
-- You (Tio) create a free **OAuth client** in Google Cloud Console once. It's clicks only, and there will be a step-by-step guide.
+- You (Tio) create a free **OAuth client** in Google Cloud Console once. It's clicks only: [docs/google-sign-in-setup.md](../google-sign-in-setup.md).
 - A new `.env` value holds the Google client secret and the cookie-signing key. Git ignores `.env`.
 - No database migration is needed: `users.google_sub` already exists (ADR 0003).
