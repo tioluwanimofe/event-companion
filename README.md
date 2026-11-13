@@ -9,6 +9,7 @@ A mobile-first event app for attendees: check in with a QR code, find booths on 
 | Path | What it is |
 |---|---|
 | [`docs/product-spec.md`](docs/product-spec.md) | Product specification and MVP architecture |
+| [`docs/database.md`](docs/database.md) | Picture (ERD) of the current database, kept up to date in every PR that changes a table |
 | [`index.html`](index.html) | Clickable prototype of the MVP (a single self-contained file) |
 
 ## Running the prototype
