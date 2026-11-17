@@ -21,12 +21,19 @@ if not (make_url(TEST_URL).database or "").endswith("_test"):
 
 # Point the app at the test database BEFORE any app module is imported.
 os.environ["DATABASE_URL"] = TEST_URL
+# Sign-in settings for tests. Google itself is never called: see `sign_in` below.
+ADMIN_EMAIL = "boss@example.com"
+os.environ["ADMIN_EMAILS"] = ADMIN_EMAIL
+os.environ["GOOGLE_CLIENT_ID"] = "test-client-id"
+os.environ["GOOGLE_CLIENT_SECRET"] = "test-client-secret"
+os.environ["SESSION_SECRET_KEY"] = "test-only-secret"
 
 from alembic import command  # noqa: E402
 from alembic.config import Config  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import text  # noqa: E402
 
+from app.auth import oauth  # noqa: E402
 from app.db import Base, SessionLocal, engine  # noqa: E402
 from app.main import app  # noqa: E402
 
@@ -55,8 +62,37 @@ def db():
 
 
 @pytest.fixture
-def client():
+def sign_in(monkeypatch):
+    """Sign a test browser in, as if Google had said "this is <email>".
+
+    We replace the one step that talks to Google (swapping the code for
+    tokens) with a fake that returns the claims we choose. Everything after
+    it, our linking rules and the session cookie, runs for real.
+    """
+    def _sign_in(client, email, *, sub=None, verified=True, given_name="Test", family_name="User"):
+        claims = {"sub": sub or f"google-{email}", "email": email, "email_verified": verified,
+                  "given_name": given_name, "family_name": family_name}
+
+        async def fake_token_swap(request):
+            return {"userinfo": claims}
+
+        monkeypatch.setattr(oauth.google, "authorize_access_token", fake_token_swap)
+        return client.get("/auth/google/callback", follow_redirects=False)
+    return _sign_in
+
+
+@pytest.fixture
+def anon_client():
+    """A browser that hasn't signed in."""
     return TestClient(app)
+
+
+@pytest.fixture
+def client(sign_in):
+    """A browser signed in as a platform admin (in ADMIN_EMAILS)."""
+    browser = TestClient(app)
+    assert sign_in(browser, ADMIN_EMAIL).status_code == 303
+    return browser
 
 
 @pytest.fixture

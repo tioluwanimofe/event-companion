@@ -153,3 +153,20 @@ class BoothOut(BaseModel):
     owners: list[PersonBrief]
     qr_link: str = Field(description="What the printed QR code contains")
     qr_image: str = Field(description="Open this path to see/print the QR code")
+
+
+# Sign-in (ADR 0004) -----------------------------------------------------------
+
+class MyRoleOut(BaseModel):
+    event_slug: str
+    role: str
+
+
+class MeOut(BaseModel):
+    """The signed-in user. Still no google_sub: it never leaves the server."""
+    id: uuid.UUID
+    email: str
+    first_name: str
+    last_name: str
+    is_platform_admin: bool
+    roles: list[MyRoleOut]

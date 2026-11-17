@@ -6,3 +6,6 @@ alembic==1.20.0
 # Time-zone data (Windows has none built in; needed for "America/Chicago")
 tzdata==2026.1
 segno==1.6.6
+# Google sign-in (ADR 0004): OAuth/OpenID Connect client + signed session cookies
+Authlib==1.9.5
+itsdangerous==2.2.0
