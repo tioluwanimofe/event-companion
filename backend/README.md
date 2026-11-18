@@ -35,6 +35,7 @@ app/
   routers/auth.py  # /auth: Google sign-in, logout, /auth/me
   routers/admin.py # /admin endpoints (admins only)
   routers/public.py# public endpoints (agenda)
+  routers/scan.py  # booth scans: preview, one-tap share, leads for booth owners
 migrations/        # Alembic: versioned changes to the tables
 tests/             # pytest, runs on a real Postgres _test database
 sample_data/       # fake registrants, agenda and booths CSVs for trying the imports
@@ -60,6 +61,12 @@ sample_data/       # fake registrants, agenda and booths CSVs for trying the imp
 | GET | `/admin/booths/{id}/qr.png` | One booth's QR code image |
 | POST | `/admin/booths/{id}/rotate-qr` | New secret for a leaked QR code |
 | GET | `/events/{slug}/agenda` | **Public** agenda, local times, no emails |
+| GET | `/scan/{token}` | What the booth QR code opens: which booth (shares nothing) |
+| POST | `/scan/{token}` | "Share my profile": saves the lead, returns the booth's notes |
+| GET | `/me/booth-visits` | My "passport": booths I've shared with |
+| GET | `/my-booths` | Booths I run, with lead counts |
+| GET | `/my-booths/{id}/leads` | That booth's leads (owners + event admins only) |
+| GET | `/my-booths/{id}/leads.csv` | Same, as an Excel-friendly spreadsheet |
 
 ## Who can do what
 
