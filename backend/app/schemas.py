@@ -170,3 +170,55 @@ class MeOut(BaseModel):
     last_name: str
     is_platform_admin: bool
     roles: list[MyRoleOut]
+
+
+# Booth scans / lead exchange -------------------------------------------------------
+
+class ScanPreview(BaseModel):
+    """Shown right after scanning, before anything is shared."""
+    booth_name: str
+    description: str | None
+    location_label: str | None
+    event_name: str
+    signed_in: bool
+    already_shared_at: datetime | None = Field(
+        description="When you shared with this booth before, or null if you haven't")
+
+
+class ScanResult(BaseModel):
+    """After tapping "Share my profile": the booth's notes are the attendee's reward."""
+    booth_name: str
+    location_label: str | None
+    preloaded_notes: str | None
+    shared_at: datetime
+    first_time: bool = Field(description="False if you had already shared with this booth")
+
+
+class VisitOut(BaseModel):
+    event_slug: str
+    booth_name: str
+    location_label: str | None
+    preloaded_notes: str | None
+    shared_at: datetime
+
+
+class MyBoothOut(BaseModel):
+    id: uuid.UUID
+    event_slug: str
+    name: str
+    location_label: str | None
+    lead_count: int
+    leads_csv: str = Field(description="Open this path to download the leads spreadsheet")
+
+
+class LeadOut(BaseModel):
+    """What a booth owner sees about someone who shared (Tio: profile + email)."""
+    first_name: str
+    last_name: str
+    email: str
+    company: str | None
+    job_title: str | None
+    is_student: bool | None
+    university: str | None
+    major: str | None
+    shared_at: datetime

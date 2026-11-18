@@ -9,7 +9,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.config import settings
 from app.db import get_db
-from app.routers import admin, auth, public
+from app.routers import admin, auth, public, scan
 
 app = FastAPI(title="Event Companion API")
 
@@ -34,6 +34,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(public.router)
+app.include_router(scan.router)
 
 
 @app.get("/health")
