@@ -1,13 +1,15 @@
 // Home: who you are, and your "passport" of booths you've shared with.
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router";
 import { api, signInUrl } from "../api";
 import { friendlyTime } from "../format";
-import { keys, useMe } from "../queries";
+import { keys, useMe, useMyBooths } from "../queries";
 
 export default function HomePage() {
   const me = useMe();
   const queryClient = useQueryClient();
   const visits = useQuery({ queryKey: keys.visits, queryFn: api.myVisits, enabled: !!me.data });
+  const myBooths = useMyBooths(!!me.data);
 
   if (me.isPending) return <main className="page"><p role="status">Loading…</p></main>;
   if (me.isError) return <main className="page"><p className="note note--problem">{me.error.message}</p></main>;
@@ -34,6 +36,17 @@ export default function HomePage() {
         <h1>Hi, {me.data.first_name}</h1>
         <button className="button button--quiet" onClick={signOut}>Sign out</button>
       </header>
+      {!!myBooths.data?.length && (
+        <Link className="card booth-row booth-row--owner" to="/my-booths">
+          <span>
+            <strong className="booth-row__name">Your booth leads</strong>
+            <span className="fineprint">You run {myBooths.data.length === 1 ? myBooths.data[0].name : `${myBooths.data.length} booths`}</span>
+          </span>
+          <span className="count">
+            {myBooths.data.reduce((sum, b) => sum + b.lead_count, 0)}<small>leads</small>
+          </span>
+        </Link>
+      )}
       <h2>Booths you've visited</h2>
       {visits.isPending && <p role="status">Loading…</p>}
       {visits.isError && <p className="note note--problem">{visits.error.message}</p>}

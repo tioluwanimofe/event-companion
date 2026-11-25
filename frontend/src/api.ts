@@ -1,7 +1,7 @@
 // Every call to FastAPI goes through here. Pages never call fetch() directly.
 // The paths start with /api, so they go to the same address as the page (ADR 0005)
 // and the browser attaches the sign-in cookie by itself. No tokens in JavaScript.
-import type { Me, ScanPreview, ScanResult, Visit } from "./types";
+import type { Lead, Me, MyBooth, ScanPreview, ScanResult, Visit } from "./types";
 
 /** An error the API answered with, e.g. 404 "This QR code isn't active". */
 export class ApiError extends Error {
@@ -55,7 +55,17 @@ export const api = {
   scanPreview: (t: string) => request<ScanPreview>(`/scan/${token(t)}`),
   shareWithBooth: (t: string) => request<ScanResult>(`/scan/${token(t)}`, { method: "POST" }),
   myVisits: () => request<Visit[]>("/me/booth-visits"),
+  myBooths: () => request<MyBooth[]>("/my-booths"),
+  boothLeads: (boothId: string) => request<Lead[]>(`/my-booths/${encodeURIComponent(boothId)}/leads`),
 };
+
+/**
+ * The leads spreadsheet. A plain link (not fetch) so the browser downloads the file
+ * itself, sending the sign-in cookie like any other request to this address.
+ */
+export function leadsCsvUrl(boothId: string): string {
+  return `/api/my-booths/${encodeURIComponent(boothId)}/leads.csv`;
+}
 
 /**
  * Sign-in is a full page visit, not fetch(): the browser has to go to Google and back.
