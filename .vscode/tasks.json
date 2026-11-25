@@ -1,5 +1,5 @@
 {
-  // One-click buttons for the backend.
+  // One-click buttons for the backend (1-5) and the React app (6-8).
   // In VS Code: Terminal menu -> Run Task... -> pick one.
   "version": "2.0.0",
   "options": { "cwd": "${workspaceFolder}/backend" },
@@ -44,6 +44,32 @@
       "type": "process",
       "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
       "args": ["-c", "import secrets; print(secrets.token_urlsafe(48))"],
+      "problemMatcher": []
+    },
+    {
+      "label": "6. Install app packages",
+      "detail": "npm install in frontend/ (once, and whenever package.json changes)",
+      "type": "shell",
+      "command": "npm install",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "problemMatcher": []
+    },
+    {
+      "label": "7. Start the app",
+      "detail": "Runs React on http://localhost:5173 (start task 3, the API, too). Stop with the trash-can icon.",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "8. Run app tests",
+      "detail": "Runs the React tests once (Vitest)",
+      "type": "shell",
+      "command": "npx vitest run",
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "group": "test",
       "problemMatcher": []
     },
     {
