@@ -1,0 +1,31 @@
+# Netlify: builds and hosts the React app (ADR 0005, ADR 0006).
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # The event the signed-out home page links to (not a secret: it ends up in the app)
+  VITE_EVENT_SLUG = "cyberdatacon-2027"
+
+# 🧠 The one-address rule, online. The phone only ever talks to the Netlify site;
+# Netlify quietly forwards /api/* to FastAPI on Render. Same site = the cookie just works.
+# If Render gave your service a different address, change it here (docs/deploy.md, step 2).
+[[redirects]]
+  from = "/api/*"
+  to = "https://event-companion-api.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# Every other path (/scan/abc, /my-booths...) is a React page: serve the app.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Always check for a new service worker, so a new deploy reaches phones quickly.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
