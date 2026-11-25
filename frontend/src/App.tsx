@@ -1,4 +1,5 @@
 import { Link, Route, Routes } from "react-router";
+import AgendaPage from "./pages/AgendaPage";
 import BoothLeadsPage from "./pages/BoothLeadsPage";
 import HomePage from "./pages/HomePage";
 import MyBoothsPage from "./pages/MyBoothsPage";
@@ -10,6 +11,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/scan/:token" element={<ScanPage />} />
+      <Route path="/events/:slug/agenda" element={<AgendaPage />} />
       <Route path="/my-booths" element={<MyBoothsPage />} />
       <Route path="/my-booths/:boothId" element={<BoothLeadsPage />} />
       <Route path="*" element={<NotFound />} />

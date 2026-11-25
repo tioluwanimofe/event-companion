@@ -19,6 +19,7 @@ export const keys = {
   scan: (token: string) => ["scan", token] as const,
   visits: ["visits"] as const,
   myBooths: ["my-booths"] as const,
+  agenda: (slug: string) => ["agenda", slug] as const,
   leads: (boothId: string) => ["leads", boothId] as const,
 };
 

@@ -5,6 +5,13 @@ import { api, signInUrl } from "../api";
 import { friendlyTime } from "../format";
 import { keys, useMe, useMyBooths } from "../queries";
 
+// The event the signed-out home page points at (set VITE_EVENT_SLUG in frontend/.env).
+const DEFAULT_EVENT = import.meta.env.VITE_EVENT_SLUG as string | undefined;
+
+function AgendaLink({ slug }: { slug: string }) {
+  return <Link className="button button--quiet agenda-link" to={`/events/${slug}/agenda`}>📅 Agenda{slug !== DEFAULT_EVENT ? `: ${slug}` : ""}</Link>;
+}
+
 export default function HomePage() {
   const me = useMe();
   const queryClient = useQueryClient();
@@ -20,6 +27,7 @@ export default function HomePage() {
         <h1>Event Companion</h1>
         <p>Scan a booth's QR code with your phone camera, or sign in to see your booth visits.</p>
         <a className="button button--big" href={signInUrl("/")}>Sign in with Google</a>
+        {DEFAULT_EVENT && <AgendaLink slug={DEFAULT_EVENT} />}
       </main>
     );
   }
@@ -30,12 +38,18 @@ export default function HomePage() {
     queryClient.setQueryData(keys.me, null);
   }
 
+  const myEvents = [...new Set(me.data.roles.map((r) => r.event_slug))];
+  if (DEFAULT_EVENT && myEvents.length === 0) myEvents.push(DEFAULT_EVENT);
+
   return (
     <main className="page">
       <header className="page__header">
         <h1>Hi, {me.data.first_name}</h1>
         <button className="button button--quiet" onClick={signOut}>Sign out</button>
       </header>
+      <div className="agenda-links">
+        {myEvents.map((slug) => <AgendaLink key={slug} slug={slug} />)}
+      </div>
       {!!myBooths.data?.length && (
         <Link className="card booth-row booth-row--owner" to="/my-booths">
           <span>

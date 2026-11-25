@@ -67,3 +67,31 @@ export interface Lead {
   major: string | null;
   shared_at: string;
 }
+
+/** GET /api/events/{slug}/agenda (AgendaOut) */
+export interface Speaker {
+  name: string;
+  company: string | null;
+}
+
+export type SessionKind = "keynote" | "breakout" | "panel" | "meal" | "networking" | "other";
+
+export interface AgendaSession {
+  id: string;
+  title: string;
+  description: string | null;
+  track: string | null;
+  kind: SessionKind;
+  room: string | null;
+  building: string | null;
+  starts_at: string; // with the event's offset, e.g. "2027-04-16T09:30:00-05:00"
+  ends_at: string;
+  speakers: Speaker[];
+}
+
+export interface Agenda {
+  event_slug: string;
+  event_name: string;
+  timezone: string; // IANA name, e.g. "America/Chicago"
+  sessions: AgendaSession[];
+}
