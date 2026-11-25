@@ -22,7 +22,7 @@
     },
     {
       "label": "3. Start the API",
-      "detail": "Runs FastAPI; open http://127.0.0.1:8000/docs in your browser. Stop with the trash-can icon.",
+      "detail": "Runs FastAPI; open http://127.0.0.1:8000/api/docs in your browser. Stop with the trash-can icon.",
       "type": "process",
       "command": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
       "args": ["-m", "fastapi", "dev", "app/main.py"],

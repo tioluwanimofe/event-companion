@@ -6,7 +6,7 @@ our linking rules, the session cookie, and who may do what.
 from sqlalchemy import func, select
 
 from app.models import EventRole, User
-from tests.conftest import upload_csv
+from tests.conftest import api_client, upload_csv
 
 REGISTRANT_CSV = "First Name,Last Name,Email\nAda,Morgan,ada@example.com\n"
 
@@ -22,7 +22,7 @@ def test_sign_in_sets_a_cookie_and_redirects_to_docs(anon_client, sign_in):
     response = sign_in(anon_client, "new.person@example.com")
 
     assert response.status_code == 303
-    assert response.headers["location"] == "/docs"
+    assert response.headers["location"] == "/api/docs"
     cookie = response.headers["set-cookie"].lower()
     assert "ec_session=" in cookie and "httponly" in cookie and "samesite=lax" in cookie
 
@@ -57,7 +57,7 @@ def test_unverified_email_cannot_claim_a_registrant(client, event, anon_client, 
 def test_email_already_linked_to_another_google_account_is_refused(anon_client, sign_in):
     sign_in(anon_client, "ada@example.com", sub="google-ada")
 
-    other_browser = type(anon_client)(anon_client.app)
+    other_browser = api_client()
     response = sign_in(other_browser, "ada@example.com", sub="google-someone-else")
 
     assert response.status_code == 403
@@ -163,7 +163,8 @@ def test_every_admin_route_is_locked(anon_client):
     """If someone adds an /admin route and forgets the guard, this fails."""
     from app.main import app
     # The OpenAPI schema (what /docs shows) lists every route and method.
-    admin_paths = {p: ops for p, ops in app.openapi()["paths"].items() if p.startswith("/admin")}
+    admin_paths = {p.removeprefix("/api"): ops for p, ops in app.openapi()["paths"].items()
+                   if p.startswith("/api/admin")}
     assert len(admin_paths) >= 9
     for path, operations in admin_paths.items():
         url = (path.replace("{slug}", "testcon")
@@ -175,3 +176,14 @@ def test_every_admin_route_is_locked(anon_client):
 
 def test_public_agenda_still_needs_no_sign_in(client, event, anon_client):
     assert anon_client.get("/events/testcon/agenda").status_code == 200
+
+
+def test_api_lives_under_api_prefix():
+    """ADR 0005: the React app owns every path that doesn't start with /api."""
+    from fastapi.testclient import TestClient
+    from app.main import app
+    root = TestClient(app)
+    assert root.get("/api/health").json() == {"status": "ok"}
+    assert root.get("/api/docs").status_code == 200
+    assert root.get("/health").status_code == 404  # old address is gone
+    assert root.get("/scan/anything").status_code == 404  # that path is React's page

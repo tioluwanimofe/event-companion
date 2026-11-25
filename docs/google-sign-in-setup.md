@@ -27,9 +27,12 @@ Why this design: [ADR 0004](decisions/0004-google-sign-in.md).
 
 1. Open **Clients** → **Create client**.
 2. **Application type:** **Web application**. **Name:** `Event Companion local`.
-3. Under **Authorized redirect URIs**, click **Add URI** and add **both** of these exactly:
-   - `http://127.0.0.1:8000/auth/google/callback`
-   - `http://localhost:8000/auth/google/callback`
+3. Under **Authorized redirect URIs**, click **Add URI** and add **all three** of these exactly:
+   - `http://127.0.0.1:8000/api/auth/google/callback` (the API on its own)
+   - `http://localhost:8000/api/auth/google/callback`
+   - `http://localhost:5173/api/auth/google/callback` (through the React app, ADR 0005)
+
+   Already made the client with the old `/auth/...` addresses? Open it, edit the list to these, **Save**.
 4. Click **Create**. A box shows your **Client ID** and **Client secret**. Copy both now.
 
 > 🧠 **Why the redirect URI matters:** after you sign in, Google sends you back *only* to an address on
@@ -53,10 +56,10 @@ Save with **Ctrl+S**. `.env` is ignored by Git, so these never go to GitHub.
 ## 5. Try it
 
 1. **Run Task → 1. Install / update Python packages** (two new packages), then **3. Start the API**.
-2. In your browser, open **<http://127.0.0.1:8000/auth/google/login>**. Use the address bar, not
-   "Try it out" in `/docs`.
-3. Pick your Google account. You land back on `/docs`, signed in.
-4. In `/docs`, try **GET /auth/me** → you, with `"is_platform_admin": true`.
+2. In your browser, open **<http://127.0.0.1:8000/api/auth/google/login>**. Use the address bar, not
+   "Try it out" in `/api/docs`.
+3. Pick your Google account. You land back on `/api/docs`, signed in.
+4. In `/api/docs`, try **GET /auth/me** → you, with `"is_platform_admin": true`.
 5. Try any `/admin` endpoint: it works. Open a private/incognito window and try the same one: **401**.
 
 Use the same address every time (`127.0.0.1` *or* `localhost`, not a mix). The browser treats them as
@@ -64,6 +67,6 @@ two different sites, with separate cookies.
 
 ## When it goes online
 
-Add the real address (for example `https://api.cyberdatacon.com/auth/google/callback`) to the
+Add the real address (for example `https://app.cyberdatacon.com/api/auth/google/callback`) to the
 redirect URIs, set `SESSION_COOKIE_SECURE=true`, and publish the consent screen so anyone with a
 Google account can sign in.
