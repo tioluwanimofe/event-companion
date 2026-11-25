@@ -15,11 +15,19 @@ Use `localhost` (not `127.0.0.1`) so the sign-in cookie and Google's redirect ma
 To try a scan: in `http://localhost:8000/api/docs`, run **GET /api/admin/events/{slug}/booths**,
 copy a booth's `qr_link` (it looks like `http://localhost:5173/scan/...`) and open it.
 
+## Installable + offline (PWA)
+
+`npm run dev` doesn't run the service worker. To try the real thing: `npm run build`, then
+`npx vite preview --port 5173` (with the API running). In Chrome, the address bar shows **Install**.
+The app shell and the last agenda you opened still load with no signal. Personal data (sign-in,
+leads, visits) is never cached. The rules are in `vite.config.ts`.
+
 ## Where things live
 
 | File | What it does |
 |---|---|
-| `vite.config.ts` | Dev server on 5173; forwards `/api/*` to FastAPI (the one-address rule) |
+| `vite.config.ts` | Dev server on 5173; forwards `/api/*` to FastAPI (the one-address rule); PWA manifest + what the service worker caches |
+| `public/` | App icons (placeholder design: a booth-code square with a ✓) |
 | `src/api.ts` | Every call to the API. Turns FastAPI's `{"detail": ...}` into a readable `ApiError` |
 | `src/types.ts` | TypeScript copies of `backend/app/schemas.py` |
 | `src/queries.ts` | TanStack Query setup: when to retry, cache keys, `useMe()` |

@@ -19,7 +19,16 @@ export default function HomePage() {
   const myBooths = useMyBooths(!!me.data);
 
   if (me.isPending) return <main className="page"><p role="status">Loading…</p></main>;
-  if (me.isError) return <main className="page"><p className="note note--problem">{me.error.message}</p></main>;
+  if (me.isError) {
+    // Usually "no signal". The agenda was saved on the phone (see vite.config.ts), so offer it.
+    return (
+      <main className="page">
+        <h1>Event Companion</h1>
+        <p className="note note--problem">{me.error.message}</p>
+        {DEFAULT_EVENT && <AgendaLink slug={DEFAULT_EVENT} />}
+      </main>
+    );
+  }
 
   if (!me.data) {
     return (
