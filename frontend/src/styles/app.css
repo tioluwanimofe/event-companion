@@ -77,3 +77,5 @@ p { margin: 0 0 12px; }
 .lead__sub { margin: 2px 0 6px; color: var(--ink-2); }
 .lead__email { color: var(--accent); font-weight: 700; overflow-wrap: anywhere; }
 .where { color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+.agenda-links { display: grid; gap: 10px; margin-bottom: 16px; }
+.agenda-link { width: 100%; min-height: var(--tap); margin-top: 10px; }
