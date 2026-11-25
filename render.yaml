@@ -1,0 +1,34 @@
+# Render "Blueprint": tells Render how to run the FastAPI backend (ADR 0006).
+# Render → New → Blueprint → pick this repo. It reads this file.
+services:
+  - type: web
+    name: event-companion-api # → https://event-companion-api.onrender.com
+    runtime: python
+    rootDir: backend
+    region: ohio # closest to Nashville; keep Neon in AWS us-east-2 (Ohio) too
+    plan: free # sleeps after 15 min idle; switch to Starter before the event
+    buildCommand: pip install -r requirements.txt
+    # Bring the database tables up to date, then start the API.
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.5"
+      - key: DATABASE_URL # from Neon (docs/deploy.md, step 1)
+        sync: false
+      - key: SESSION_SECRET_KEY # Render makes a long random one for you
+        generateValue: true
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+      - key: AFTER_LOGIN_URL
+        value: "/"
+      - key: APP_BASE_URL # your Netlify address, e.g. https://cyberdatacon-companion.netlify.app
+        sync: false
+      - key: OAUTH_CALLBACK_URL # <APP_BASE_URL>/api/auth/google/callback
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: ADMIN_EMAILS
+        sync: false

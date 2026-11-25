@@ -187,3 +187,26 @@ def test_api_lives_under_api_prefix():
     assert root.get("/api/docs").status_code == 200
     assert root.get("/health").status_code == 404  # old address is gone
     assert root.get("/scan/anything").status_code == 404  # that path is React's page
+
+
+def test_hosting_database_links_get_the_psycopg_driver():
+    from app.config import Settings
+    for given in ("postgres://u:p@host/db", "postgresql://u:p@host/db?sslmode=require"):
+        url = Settings(database_url=given).database_url
+        assert url.startswith("postgresql+psycopg://u:p@host/db"), url
+    assert Settings(database_url="postgresql+psycopg://x/y").database_url == "postgresql+psycopg://x/y"
+
+
+def test_online_the_google_callback_address_comes_from_settings(anon_client, monkeypatch):
+    """Behind Netlify's proxy the request host is Render's, so we must not trust it."""
+    from fastapi.responses import PlainTextResponse
+    from app.auth import oauth
+    from app.config import settings
+
+    async def show_redirect_uri(request, redirect_uri, **kwargs):
+        return PlainTextResponse(str(redirect_uri))
+
+    monkeypatch.setattr(oauth.google, "authorize_redirect", show_redirect_uri)
+    assert anon_client.get("/auth/google/login").text == "http://testserver/api/auth/google/callback"
+    monkeypatch.setattr(settings, "oauth_callback_url", "https://companion.example/api/auth/google/callback")
+    assert anon_client.get("/auth/google/login").text == "https://companion.example/api/auth/google/callback"

@@ -61,7 +61,7 @@ async def google_login(request: Request, next: str | None = None):
     request.session.pop(NEXT_KEY, None)
     if (target := safe_next(next)) is not None:
         request.session[NEXT_KEY] = target
-    redirect_uri = request.url_for("google_callback")
+    redirect_uri = settings.oauth_callback_url or request.url_for("google_callback")
     # prompt=select_account: always show the account picker, handy when testing
     return await oauth.google.authorize_redirect(request, redirect_uri, prompt="select_account")
 
