@@ -7,7 +7,7 @@ export const queryClient = new QueryClient({
       // 🧠 Retry only when it might help. A 404 or 403 will say the same thing
       // every time, but a dropped connection (status 0) or a server hiccup (5xx) might not.
       retry: (failures, error) =>
-        failures < 3 && !(error instanceof ApiError && error.status >= 400 && error.status < 500),
+        failures < 2 && !(error instanceof ApiError && error.status >= 400 && error.status < 500),
       refetchOnWindowFocus: false,
     },
   },
