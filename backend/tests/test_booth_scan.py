@@ -3,14 +3,12 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
-from fastapi.testclient import TestClient
 from sqlalchemy import func, select
 from starlette.responses import RedirectResponse
 
 from app.auth import oauth
-from app.main import app
 from app.models import BoothScan
-from tests.conftest import upload_csv
+from tests.conftest import api_client, upload_csv
 
 DATA = Path(__file__).resolve().parent.parent / "sample_data"
 
@@ -29,7 +27,7 @@ def expo(client, cdc):
 def browser(sign_in):
     """A fresh browser, signed in as whoever you say."""
     def _as(email):
-        b = TestClient(app)
+        b = api_client()
         assert sign_in(b, email).status_code == 303
         return b
     return _as
@@ -116,7 +114,7 @@ def test_leads_are_private_to_that_booth(browser, client, expo):
     # Another booth's owner, an attendee, and someone signed out: all refused.
     assert browser("rita.okafor@example.com").get(harbor).status_code == 403
     assert browser(ADA).get(harbor).status_code == 403
-    assert TestClient(app).get(harbor).status_code == 401
+    assert api_client().get(harbor).status_code == 401
     # The event's admin can see them.
     assert client.get(harbor).status_code == 200
 
@@ -157,19 +155,19 @@ def fake_google_redirect(monkeypatch):
 
 
 def test_sign_in_returns_you_to_the_booth_you_scanned(fake_google_redirect, sign_in):
-    b = TestClient(app)
+    b = api_client()
     b.get("/auth/google/login?next=/scan/abc123", follow_redirects=False)
     assert sign_in(b, ADA).headers["location"] == "/scan/abc123"
 
 
 def test_sign_in_never_redirects_to_another_website(fake_google_redirect, sign_in):
     for evil in ("https://evil.example/phish", "//evil.example", "/\\evil.example"):
-        b = TestClient(app)
+        b = api_client()
         b.get("/auth/google/login", params={"next": evil}, follow_redirects=False)
-        assert sign_in(b, ADA).headers["location"] == "/docs", evil
+        assert sign_in(b, ADA).headers["location"] == "/api/docs", evil
 
 
 def test_frontend_pages_are_allowed_as_next(fake_google_redirect, sign_in):
-    b = TestClient(app)
+    b = api_client()
     b.get("/auth/google/login", params={"next": "http://localhost:5173/scan/x"}, follow_redirects=False)
     assert sign_in(b, ADA).headers["location"] == "http://localhost:5173/scan/x"

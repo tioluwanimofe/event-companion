@@ -1,7 +1,7 @@
 import logging
 import secrets
 
-from fastapi import Depends, FastAPI
+from fastapi import APIRouter, Depends, FastAPI
 from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
@@ -11,7 +11,13 @@ from app.config import settings
 from app.db import get_db
 from app.routers import admin, auth, public, scan
 
-app = FastAPI(title="Event Companion API")
+# 🧠 Every API path starts with /api (ADR 0005). The React app owns every other
+# path, so /scan/abc is the page a phone camera opens and /api/scan/abc is the
+# JSON behind it. One address for both means the sign-in cookie just works.
+API_PREFIX = "/api"
+
+app = FastAPI(title="Event Companion API", docs_url=f"{API_PREFIX}/docs",
+              openapi_url=f"{API_PREFIX}/openapi.json", redoc_url=None)
 
 secret_key = settings.session_secret_key
 if not secret_key:
@@ -31,21 +37,25 @@ app.add_middleware(
     https_only=settings.session_cookie_secure,
 )
 
-app.include_router(auth.router)
-app.include_router(admin.router)
-app.include_router(public.router)
-app.include_router(scan.router)
+api = APIRouter(prefix=API_PREFIX)
+api.include_router(auth.router)
+api.include_router(admin.router)
+api.include_router(public.router)
+api.include_router(scan.router)
 
 
-@app.get("/health")
+@api.get("/health")
 def health():
     """Is the API running?"""
     return {"status": "ok"}
 
 
-@app.get("/health/db")
+@api.get("/health/db")
 def health_db(db: Session = Depends(get_db)):
     """Can the API reach Postgres, and which tables exist?"""
     db.execute(text("SELECT 1"))
     tables = sorted(inspect(db.get_bind()).get_table_names())
     return {"database": "ok", "tables": tables}
+
+
+app.include_router(api)

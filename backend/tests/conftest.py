@@ -81,16 +81,22 @@ def sign_in(monkeypatch):
     return _sign_in
 
 
+def api_client() -> TestClient:
+    """A test browser whose paths are relative to /api, so "/admin/events"
+    really requests /api/admin/events, like the React app will."""
+    return TestClient(app, base_url="http://testserver/api")
+
+
 @pytest.fixture
 def anon_client():
     """A browser that hasn't signed in."""
-    return TestClient(app)
+    return api_client()
 
 
 @pytest.fixture
 def client(sign_in):
     """A browser signed in as a platform admin (in ADMIN_EMAILS)."""
-    browser = TestClient(app)
+    browser = api_client()
     assert sign_in(browser, ADMIN_EMAIL).status_code == 303
     return browser
 

@@ -36,8 +36,8 @@ class Settings(BaseSettings):
     # True as soon as the API is online.
     session_cookie_secure: bool = False
 
-    # Where to send people after they sign in. /docs is handy until React exists.
-    after_login_url: str = "/docs"
+    # Where to send people after they sign in. The API docs are handy until React exists.
+    after_login_url: str = "/api/docs"
 
     # Comma-separated. These people can manage every event, even before any
     # roles exist (that's how the very first admin gets in).
