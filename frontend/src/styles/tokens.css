@@ -1,0 +1,46 @@
+/* Design tokens: the app's colors, fonts and sizes in ONE place.
+   Taken from the clickable prototype (index.html in the repo root).
+   Components use var(--name) and never hard-code a color. */
+:root {
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --ground: #E6E9E2;
+  --surface: #FAFBF7;
+  --surface-2: #EFF2EB;
+  --ink: #15191C;
+  --ink-2: #535C57;
+  --ink-3: #7E8782;
+  --line: #D5DAD1;
+  --accent: #D4430E;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #FBE2D6;
+  --ok: #0E7A5F;
+  --ok-soft: #D7EEE4;
+  --danger: #B42318;
+  --danger-soft: #FBE4E1;
+
+  --radius: 14px;
+  --space: 16px;
+  --tap: 52px; /* smallest comfortable thumb target */
+}
+
+/* Dark mode follows the phone's setting. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #0B0E0F;
+    --surface: #131718;
+    --surface-2: #1B2022;
+    --ink: #ECEFE9;
+    --ink-2: #A2ABA6;
+    --ink-3: #737C77;
+    --line: #2A3134;
+    --accent: #FF6B35;
+    --accent-ink: #1A0B04;
+    --accent-soft: #3A1E12;
+    --ok: #43C59C;
+    --ok-soft: #10302A;
+    --danger: #FF7A6B;
+    --danger-soft: #3A1715;
+  }
+}

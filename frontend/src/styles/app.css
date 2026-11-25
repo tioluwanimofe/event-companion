@@ -1,0 +1,56 @@
+/* Shared building blocks used on every page. */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { color-scheme: light dark; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 17px/1.5 var(--f-body);
+  -webkit-text-size-adjust: 100%;
+}
+h1, h2, h3 { font-family: var(--f-display); font-stretch: 85%; line-height: 1.1; margin: 0 0 8px; }
+h1 { font-size: 30px; font-weight: 800; }
+h2 { font-size: 20px; font-weight: 700; }
+h3 { font-size: 18px; font-weight: 700; }
+p { margin: 0 0 12px; }
+
+.page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: calc(var(--space) * 1.5) var(--space) calc(var(--space) * 3);
+}
+.page__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space);
+}
+
+.eyebrow {
+  font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 4px;
+}
+.fineprint { font-size: 14px; color: var(--ink-3); }
+
+.button {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; padding: 0 18px;
+  border: 0; border-radius: 999px;
+  background: var(--accent); color: var(--accent-ink);
+  font: 700 16px var(--f-body); text-decoration: none; cursor: pointer;
+}
+.button:disabled { opacity: .6; cursor: progress; }
+.button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.button--big { width: 100%; min-height: var(--tap); font-size: 18px; }
+.button--quiet { background: var(--surface-2); color: var(--ink); }
+
+.note { padding: 12px 14px; border-radius: 10px; font-size: 15px; }
+.note--ok { background: var(--ok-soft); color: var(--ok); }
+.note--problem { background: var(--danger-soft); color: var(--danger); }
+
+.notes__body { white-space: pre-line; overflow-wrap: anywhere; }
+
+.visits { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
