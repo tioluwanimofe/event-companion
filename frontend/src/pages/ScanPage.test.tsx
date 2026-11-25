@@ -1,9 +1,8 @@
 // Tests for the scan page. We fake the API (fetch) and check what a person sees.
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { fakeApi, renderPage } from "../test-utils";
 import ScanPage from "./ScanPage";
 
 const preview = {
@@ -12,27 +11,8 @@ const preview = {
   signed_in: true, already_shared_at: null,
 };
 
-/** Fake API: each entry answers one "METHOD /path". Records every call. */
-function fakeApi(routes: Record<string, { status: number; body?: unknown }>) {
-  const calls: string[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
-    const key = `${init?.method ?? "GET"} ${url}`;
-    calls.push(key);
-    const answer = routes[key] ?? { status: 404, body: { detail: "Not Found" } };
-    return new Response(JSON.stringify(answer.body ?? null), { status: answer.status });
-  }));
-  return calls;
-}
-
 function openScanPage(token = "abc123") {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  render(
-    <QueryClientProvider client={client}>
-      <MemoryRouter initialEntries={[`/scan/${token}`]}>
-        <Routes><Route path="/scan/:token" element={<ScanPage />} /></Routes>
-      </MemoryRouter>
-    </QueryClientProvider>,
-  );
+  renderPage("/scan/:token", `/scan/${token}`, <ScanPage />);
 }
 
 afterEach(() => vi.unstubAllGlobals());

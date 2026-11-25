@@ -54,3 +54,26 @@ p { margin: 0 0 12px; }
 .notes__body { white-space: pre-line; overflow-wrap: anywhere; }
 
 .visits { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+
+.back { display: inline-block; margin-bottom: 12px; color: var(--ink-2); text-decoration: none; font-weight: 700; }
+
+/* A tappable booth row: name on the left, big lead count on the right */
+.booth-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  color: inherit; text-decoration: none; min-height: var(--tap);
+}
+.booth-row > span:first-child { display: grid; gap: 2px; }
+.booth-row__name { font-size: 18px; }
+.booth-row--owner { margin-bottom: 20px; border-color: var(--accent); }
+.count { display: grid; justify-items: center; font: 800 28px/1 var(--f-display); color: var(--accent); }
+.count small { font: 700 12px var(--f-body); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+
+.leads-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 8px 0 4px; }
+.leads-bar__count { margin: 0; }
+.leads-bar__count strong { font: 800 26px var(--f-display); }
+
+.lead__top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.lead__top h3 { margin: 0; }
+.lead__sub { margin: 2px 0 6px; color: var(--ink-2); }
+.lead__email { color: var(--accent); font-weight: 700; overflow-wrap: anywhere; }
+.where { color: var(--accent); font-weight: 700; margin-bottom: 8px; }

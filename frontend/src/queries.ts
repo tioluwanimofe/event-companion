@@ -18,8 +18,15 @@ export const keys = {
   me: ["me"] as const,
   scan: (token: string) => ["scan", token] as const,
   visits: ["visits"] as const,
+  myBooths: ["my-booths"] as const,
+  leads: (boothId: string) => ["leads", boothId] as const,
 };
 
 export function useMe() {
   return useQuery({ queryKey: keys.me, queryFn: api.me, staleTime: 60_000 });
+}
+
+/** Booths the signed-in person runs. Empty list for most attendees. */
+export function useMyBooths(enabled = true) {
+  return useQuery({ queryKey: keys.myBooths, queryFn: api.myBooths, enabled });
 }

@@ -44,3 +44,26 @@ export interface Visit {
   preloaded_notes: string | null;
   shared_at: string;
 }
+
+/** GET /api/my-booths (MyBoothOut): booths I run */
+export interface MyBooth {
+  id: string;
+  event_slug: string;
+  name: string;
+  location_label: string | null;
+  lead_count: number;
+  leads_csv: string; // e.g. "/my-booths/<id>/leads.csv" (add /api in front)
+}
+
+/** GET /api/my-booths/{id}/leads (LeadOut): someone who tapped "Share my profile" */
+export interface Lead {
+  first_name: string;
+  last_name: string;
+  email: string;
+  company: string | null;
+  job_title: string | null;
+  is_student: boolean | null;
+  university: string | null;
+  major: string | null;
+  shared_at: string;
+}

@@ -23,7 +23,13 @@ copy a booth's `qr_link` (it looks like `http://localhost:5173/scan/...`) and op
 | `src/queries.ts` | TanStack Query setup: when to retry, cache keys, `useMe()` |
 | `src/App.tsx` | The list of pages (routes) |
 | `src/pages/ScanPage.tsx` | `/scan/:token`: booth preview → sign in → Share my profile → notes |
-| `src/pages/HomePage.tsx` | `/`: who you are + booths you've visited |
+| `src/pages/HomePage.tsx` | `/`: who you are, your booth leads (if you run a booth), booths you've visited |
+| `src/pages/MyBoothsPage.tsx` | `/my-booths`: booths you run, with lead counts |
+| `src/pages/BoothLeadsPage.tsx` | `/my-booths/:boothId`: the leads, refreshing every 30 s, plus the CSV download |
+| `src/components.tsx` | Small shared pieces (the "Sign in first" screen) |
+| `src/test-utils.tsx` | Fake API + render helpers for the tests |
 | `src/styles/tokens.css` | Colors and fonts from the prototype, light and dark |
 
 ![The scan flow on a phone](../docs/images/scan-flow.png)
+
+![A booth owner's leads](../docs/images/booth-leads.png)
